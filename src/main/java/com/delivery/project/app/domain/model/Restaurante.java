@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,8 +20,13 @@ public class Restaurante {
     private String nome;
     private Double taxaFrete;
     @ManyToOne
+    @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
     @OneToMany(mappedBy = "restaurante")
-    private List<FormaDePagamento> formasDePagamento;
+    private final List<FormaDePagamento> formasDePagamento = new ArrayList<>();
+    @Embedded
+    private Endereco endereco;
+    @OneToMany(mappedBy = "restaurante")
+    private List<Produto> produtos = new ArrayList<>();
 
 }

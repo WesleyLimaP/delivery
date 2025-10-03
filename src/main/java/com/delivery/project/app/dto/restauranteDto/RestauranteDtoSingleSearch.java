@@ -1,28 +1,30 @@
 package com.delivery.project.app.dto.restauranteDto;
 
+import com.delivery.project.app.domain.model.Endereco;
 import com.delivery.project.app.domain.model.Restaurante;
 import com.delivery.project.app.dto.cozinhaDto.CozinhaDto;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Embedded;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class RestauranteDto {
+public class RestauranteDtoSingleSearch {
     private Long id;
     private String nome;
     private Double taxaFrete;
     private CozinhaDto cozinha;
+    private List<FormaDePagamentoDto> formasDePagamento = new ArrayList<>();
+    private EnderecoDto endereco;
 
-    public RestauranteDto(Restaurante restaurante){
+    public RestauranteDtoSingleSearch(Restaurante restaurante){
         this.id = restaurante.getId();
         this.nome = restaurante.getNome();
         this.taxaFrete = restaurante.getTaxaFrete();
         this.cozinha = new CozinhaDto(restaurante.getCozinha().getId(), restaurante.getNome());
-
+        this.formasDePagamento = restaurante.getFormasDePagamento().stream().map(x -> new FormaDePagamentoDto(x.getId(), x.getDescricao())).toList();
+        this.endereco = new EnderecoDto(restaurante.getEndereco());
     }
 
 

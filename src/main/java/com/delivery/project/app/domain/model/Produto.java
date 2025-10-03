@@ -6,22 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_cidade")
+@Table(name = "tb_produto")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Cidade {
+@NoArgsConstructor
+public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    private String descricao;
+    private Double preco;
+    private boolean ativo;
     @ManyToOne
-    @JoinColumn(name = "estado_id")
-    private Estado estado;
-
-
-    public Cidade(String nome, Estado estado) {
-        this.nome = nome;
-        this.estado = estado;
-    }
+    @JoinColumn(name = "restaurante_id")
+    private Restaurante restaurante;
 }

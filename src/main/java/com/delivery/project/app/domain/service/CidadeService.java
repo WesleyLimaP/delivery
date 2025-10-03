@@ -55,7 +55,7 @@ public class CidadeService {
     public CidadeDto insert(CidadeDto dto){
         Estado estado = estadorepository.findById(dto.getEstadoDto().getId()).orElseThrow(() ->
                 new IdNaoEncontradoException("o id nao foi encontrado"));
-      Cidade cidade = new Cidade(null, dto.getNome(), estado );
+      Cidade cidade = new Cidade(dto.getNome(), estado );
       dto = new CidadeDto(repository.save(cidade));
       return dto;
 

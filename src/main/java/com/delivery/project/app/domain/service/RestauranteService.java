@@ -4,6 +4,7 @@ import com.delivery.project.app.domain.model.FormaDePagamento;
 import com.delivery.project.app.domain.model.Restaurante;
 import com.delivery.project.app.dto.restauranteDto.RestauranteDto;
 import com.delivery.project.app.dto.restauranteDto.RestauranteDtoInsert;
+import com.delivery.project.app.dto.restauranteDto.RestauranteDtoSingleSearch;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.IdNaoEncontradoException;
 import com.delivery.project.app.repository.CozinhaRepository;
@@ -34,11 +35,11 @@ public class RestauranteService {
 
 
     @Transactional(readOnly = true)
-    public RestauranteDto findById(Long id) {
+    public RestauranteDtoSingleSearch findById(Long id) {
         Restaurante restaurante = restauranteRepository.getId(id).orElseThrow(() ->
                 new IdNaoEncontradoException("id nao encontrado"));
 
-        return new RestauranteDto(restaurante);
+        return new RestauranteDtoSingleSearch(restaurante);
     }
 
     @Transactional
@@ -63,7 +64,8 @@ public class RestauranteService {
         restaurante.setCozinha(cozinha);
         restaurante.setNome(dto.getNome());
         restaurante.setTaxaFrete(dto.getTaxaFrete());
-        restaurante.setFormasDePagamento(formaDePagamentosObj);
+        restaurante.getFormasDePagamento().addAll(formaDePagamentosObj);
+        restaurante.setEndereco(dto.getEndereco());
     }
 
     @Transactional

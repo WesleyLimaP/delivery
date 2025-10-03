@@ -3,6 +3,7 @@ package com.delivery.project.app.controller;
 import com.delivery.project.app.domain.service.RestauranteService;
 import com.delivery.project.app.dto.restauranteDto.RestauranteDto;
 import com.delivery.project.app.dto.restauranteDto.RestauranteDtoInsert;
+import com.delivery.project.app.dto.restauranteDto.RestauranteDtoSingleSearch;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.IdNaoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +30,15 @@ public class RestauranteController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<RestauranteDto> findById(@PathVariable Long id){
+    public ResponseEntity<RestauranteDtoSingleSearch> findById(@PathVariable Long id){
         return ResponseEntity.ok().body(service.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<RestauranteDto> insert (@RequestBody RestauranteDtoInsert dto){
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest() // pega a URI do POST /restaurantes// acrescenta /{id}
-                .buildAndExpand() // substitui {id}
+                .fromCurrentRequest()
+                .buildAndExpand()
                 .toUri();
         return ResponseEntity.created(location).body(service.insert(dto));
     }

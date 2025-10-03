@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long> {
-    @Query(value = "SELECT DISTINCT obj from Restaurante obj  JOIN FETCH obj.cozinha JOIN FETCH obj.formasDePagamento")
+    @Query(value = "SELECT DISTINCT obj from Restaurante obj JOIN FETCH obj.cozinha ")
     public List<Restaurante> getAll();
 
     @Query(value = "SELECT DISTINCT obj FROM Restaurante obj JOIN FETCH obj.cozinha JOIN FETCH obj.formasDePagamento WHERE obj.id = :id ")

@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "tb_forma_de_pagamento")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class FormaDePagamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
