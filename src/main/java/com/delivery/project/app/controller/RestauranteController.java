@@ -5,7 +5,7 @@ import com.delivery.project.app.dto.restauranteDto.RestauranteDto;
 import com.delivery.project.app.dto.restauranteDto.RestauranteDtoInsert;
 import com.delivery.project.app.dto.restauranteDto.RestauranteDtoSingleSearch;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.IdNaoEncontradoException;
+import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
@@ -50,7 +49,7 @@ public class RestauranteController {
             return status(HttpStatus.NO_CONTENT).build();
         } catch (EntidadeEmUsoException e) {
             return status(HttpStatus.CONFLICT).body(e.getMessage());
-        }catch (IdNaoEncontradoException e){
+        }catch (EntidadeNaoEncontradaException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

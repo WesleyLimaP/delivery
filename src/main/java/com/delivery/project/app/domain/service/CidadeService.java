@@ -4,7 +4,7 @@ import com.delivery.project.app.domain.model.Estado;
 import com.delivery.project.app.dto.cidadeDto.CidadeDto;
 import com.delivery.project.app.dto.cidadeDto.CidadeUpdateDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.IdNaoEncontradoException;
+import com.delivery.project.app.exceptions.CidadeNaoEncontradaException;
 import com.delivery.project.app.repository.CidadeRepository;
 import com.delivery.project.app.repository.EstadoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +18,8 @@ import java.util.List;
 
 @Service
 public class CidadeService {
+    public static final String ID_NAO_ENCONTRADO = " id nao  encontrado";
+    public static final String MSG_INTEGRIDADE_REFERENCIAL = "a entidade nao pode ser deletada pois outras classes dependem dela";
     @Autowired
     private CidadeRepository repository;
     @Autowired
@@ -32,8 +34,7 @@ public class CidadeService {
 
     @Transactional(readOnly = true)
     public CidadeDto findById(Long id){
-       Cidade cidade = repository.findById(id).orElseThrow(() ->
-                new IdNaoEncontradoException("o id " + id + " nao foi encontrado"));
+       Cidade cidade = findByIdOrElseThrow(id);
 
        return new CidadeDto(cidade);
     }
@@ -43,9 +44,9 @@ public class CidadeService {
         try {
             repository.deleteById(id);
         }catch (DataIntegrityViolationException e){
-            throw new EntidadeEmUsoException("a entidade nao pode ser deletada pois outras classes dependem dela");
+            throw new EntidadeEmUsoException(MSG_INTEGRIDADE_REFERENCIAL);
         }catch (EntityNotFoundException e){
-        throw new IdNaoEncontradoException("o id " + id + " nao foi encontrado");
+        throw new CidadeNaoEncontradaException(ID_NAO_ENCONTRADO);
         }
     }
 
@@ -54,7 +55,7 @@ public class CidadeService {
     @Transactional
     public CidadeDto insert(CidadeDto dto){
         Estado estado = estadorepository.findById(dto.getEstadoDto().getId()).orElseThrow(() ->
-                new IdNaoEncontradoException("o id nao foi encontrado"));
+                new CidadeNaoEncontradaException(ID_NAO_ENCONTRADO));
       Cidade cidade = new Cidade(dto.getNome(), estado );
       dto = new CidadeDto(repository.save(cidade));
       return dto;
@@ -63,12 +64,16 @@ public class CidadeService {
 
     @Transactional
     public CidadeDto update(Long id, CidadeUpdateDto dto){
-        Cidade cidade = repository.findById(id).orElseThrow(() -> new IdNaoEncontradoException(
-                "o id " + id + " nao foi encontrado"));
+        Cidade cidade = findByIdOrElseThrow(id);
         cidade.setNome(dto.nome());
 
         return new CidadeDto(cidade);
 
+    }
+
+    private Cidade findByIdOrElseThrow(Long id) {
+        return repository.findById(id).orElseThrow(() ->
+                new CidadeNaoEncontradaException(ID_NAO_ENCONTRADO));
     }
 
 

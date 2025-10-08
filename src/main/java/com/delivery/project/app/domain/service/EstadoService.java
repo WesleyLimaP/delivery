@@ -1,13 +1,9 @@
 package com.delivery.project.app.domain.service;
 
-import com.delivery.project.app.domain.model.Cidade;
 import com.delivery.project.app.domain.model.Estado;
-import com.delivery.project.app.dto.cidadeDto.CidadeDto;
-import com.delivery.project.app.dto.cidadeDto.CidadeUpdateDto;
 import com.delivery.project.app.dto.estadoDto.EstadoDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.IdNaoEncontradoException;
-import com.delivery.project.app.repository.CidadeRepository;
+import com.delivery.project.app.exceptions.EstadoNaoEncontradoException;
 import com.delivery.project.app.repository.EstadoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +15,8 @@ import java.util.List;
 
 @Service
 public class EstadoService {
+    public static final String ID_NAO_FOI_ENCONTRADO = "id nao foi encontrado";
+    public static final String MSG_INTEGRIDADE_REFERENCIAL = "a entidade nao pode ser deletada pois outras classes dependem dela";
     @Autowired
     private EstadoRepository repository;
 
@@ -31,8 +29,7 @@ public class EstadoService {
 
     @Transactional(readOnly = true)
     public EstadoDto findById(Long id){
-       Estado estado = repository.findById(id).orElseThrow(() ->
-                new IdNaoEncontradoException("o id " + id + " nao foi encontrado"));
+       Estado estado = getOrElseThrow(id);
 
        return new EstadoDto(estado);
     }
@@ -42,9 +39,9 @@ public class EstadoService {
         try {
             repository.deleteById(id);
         }catch (DataIntegrityViolationException e){
-            throw new EntidadeEmUsoException("a entidade nao pode ser deletada pois outras classes dependem dela");
+            throw new EntidadeEmUsoException(MSG_INTEGRIDADE_REFERENCIAL);
         }catch (EntityNotFoundException e){
-        throw new IdNaoEncontradoException("o id " + id + " nao foi encontrado");
+        throw new EstadoNaoEncontradoException(ID_NAO_FOI_ENCONTRADO);
         }
     }
 
@@ -60,15 +57,17 @@ public class EstadoService {
 
     @Transactional
     public EstadoDto update(Long id, EstadoDto dto){
-        Estado estado = repository.findById(id).orElseThrow(() -> new IdNaoEncontradoException(
-                "o id " + id + " nao foi encontrado"));
+        Estado estado = getOrElseThrow(id);
         estado.setNome(dto.getNome());
 
         return new EstadoDto(estado);
 
     }
 
-
+    private Estado getOrElseThrow(Long id) {
+        return repository.findById(id).orElseThrow(() -> new EstadoNaoEncontradoException(
+                ID_NAO_FOI_ENCONTRADO));
+    }
 
 
 }

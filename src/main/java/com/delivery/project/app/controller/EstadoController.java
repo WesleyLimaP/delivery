@@ -3,7 +3,7 @@ package com.delivery.project.app.controller;
 import com.delivery.project.app.domain.service.EstadoService;
 import com.delivery.project.app.dto.estadoDto.EstadoDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.IdNaoEncontradoException;
+import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +48,7 @@ public class EstadoController {
             return status(HttpStatus.NO_CONTENT).build();
         } catch (EntidadeEmUsoException e) {
             return status(HttpStatus.CONFLICT).body(e.getMessage());
-        }catch (IdNaoEncontradoException e){
+        }catch (EntidadeNaoEncontradaException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

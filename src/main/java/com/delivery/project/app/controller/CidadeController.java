@@ -1,12 +1,10 @@
 package com.delivery.project.app.controller;
 
 import com.delivery.project.app.domain.service.CidadeService;
-import com.delivery.project.app.domain.service.CozinhaService;
 import com.delivery.project.app.dto.cidadeDto.CidadeDto;
 import com.delivery.project.app.dto.cidadeDto.CidadeUpdateDto;
-import com.delivery.project.app.dto.cozinhaDto.CozinhaDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.IdNaoEncontradoException;
+import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +49,7 @@ public class CidadeController {
             return status(HttpStatus.NO_CONTENT).build();
         } catch (EntidadeEmUsoException e) {
             return status(HttpStatus.CONFLICT).body(e.getMessage());
-        }catch (IdNaoEncontradoException e){
+        }catch (EntidadeNaoEncontradaException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

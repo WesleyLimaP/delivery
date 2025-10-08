@@ -6,13 +6,12 @@ import com.delivery.project.app.dto.restauranteDto.RestauranteDto;
 import com.delivery.project.app.dto.restauranteDto.RestauranteDtoInsert;
 import com.delivery.project.app.dto.restauranteDto.RestauranteDtoSingleSearch;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.IdNaoEncontradoException;
+import com.delivery.project.app.exceptions.RestauranteNaoEncontradoException;
 import com.delivery.project.app.repository.CozinhaRepository;
 import com.delivery.project.app.repository.FormaDePagamentoRepository;
 import com.delivery.project.app.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +20,10 @@ import java.util.Optional;
 
 @Service
 public class RestauranteService {
+    public static final String MSG_COZINHA_NAO_ENCONTRADA = "cozinha nao encontrada";
+    public static final String MSG_RESTAURANTE_NAO_ENCONTRADO = "Restaurante nao encontrado";
+    public static final String MSG_INTEGRIDADE_REFERENCIAL = "A entidade nao pode ser apagada pois existe dependencia com outras classes";
+    public static final String MSG_FORMA_DE_PAGAMENTO_NAO_ENCONTRADA = "forma de pagamento nao encontrada";
     @Autowired
     private RestauranteRepository restauranteRepository;
     @Autowired
@@ -36,25 +39,15 @@ public class RestauranteService {
 
     @Transactional(readOnly = true)
     public RestauranteDtoSingleSearch findById(Long id) {
-        Restaurante restaurante = restauranteRepository.getId(id).orElseThrow(() ->
-                new IdNaoEncontradoException("id nao encontrado"));
+        Restaurante restaurante = getOrElseThrow(id);
 
         return new RestauranteDtoSingleSearch(restaurante);
     }
 
     @Transactional
     public RestauranteDto insert(RestauranteDtoInsert dto) {
-        Cozinha cozinha = cozinhaRepository.findById(dto.getCozinhaId()).orElseThrow(() ->
-                new IdNaoEncontradoException("cozinha nao encontrada"));
-
-        List<Optional<FormaDePagamento>> formaDePagamentoList =
-                formaDePagamentoRepository.getByIds(dto.getFormasDePagamento());
-        
-        List<FormaDePagamento> formaDePagamentosObj = formaDePagamentoList.stream().map(
-                x -> x.orElseThrow(() -> new IdNaoEncontradoException(
-                        "forma de pagamento nao encontrada"
-                ))).toList();
-
+        Cozinha cozinha = getCozinhaOrElseThrow(dto);
+        List<FormaDePagamento> formaDePagamentosObj = getFormaDePagamentosObj(dto);
         Restaurante restaurante = new Restaurante();
         marge(restaurante, dto, cozinha, formaDePagamentosObj);
         return new RestauranteDto( restauranteRepository.save(restaurante));
@@ -71,34 +64,43 @@ public class RestauranteService {
     @Transactional
     public void delete(Long id) {
         try {
-            restauranteRepository.deleteById( restauranteRepository.findById(id).orElseThrow(() ->
-                    new IdNaoEncontradoException("restaurante nao encontrado")).getId());
+            restauranteRepository.deleteById(getOrElseThrow(id).getId());
             restauranteRepository.flush();
         }
         catch (DataIntegrityViolationException e){
-            throw new EntidadeEmUsoException("A entidade nao pode ser apagada pois existe dependencia com outras classes" );
+            throw new EntidadeEmUsoException(MSG_INTEGRIDADE_REFERENCIAL);
         }
 
     }
 
     @Transactional
     public RestauranteDto update(Long id, RestauranteDtoInsert dto) {
-        Restaurante restaurante = restauranteRepository.getId(id).orElseThrow(() ->
-                new IdNaoEncontradoException("restaurante com id " + id + " nao foi encontrado"));
+        Restaurante restaurante = getOrElseThrow(id);
 
-        Cozinha cozinha = cozinhaRepository.findById(dto.getCozinhaId()).orElseThrow(() ->
-                new IdNaoEncontradoException("cozinha nao encontrada"));
+        Cozinha cozinha = getCozinhaOrElseThrow(dto);
 
-        List<Optional<FormaDePagamento>> formaDePagamentoList =
-                formaDePagamentoRepository.getByIds(dto.getFormasDePagamento());
-
-        List<FormaDePagamento> formaDePagamentosObj = formaDePagamentoList.stream().map(
-                x -> x.orElseThrow(() -> new IdNaoEncontradoException(
-                        "forma de pagamento nao encontrada"
-                ))).toList();
+        List<FormaDePagamento> formaDePagamentosObj = getFormaDePagamentosObj(dto);
 
         marge(restaurante, dto, cozinha, formaDePagamentosObj);
         return new RestauranteDto(restaurante);
 
+    }
+
+    private Cozinha getCozinhaOrElseThrow(RestauranteDtoInsert dto) {
+        return cozinhaRepository.findById(dto.getCozinhaId()).orElseThrow(() ->
+                new RestauranteNaoEncontradoException(MSG_COZINHA_NAO_ENCONTRADA));
+    }
+    private Restaurante getOrElseThrow(Long id) {
+        return restauranteRepository.getId(id).orElseThrow(() ->
+                new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO));
+    }
+    private List<FormaDePagamento> getFormaDePagamentosObj(RestauranteDtoInsert dto) {
+        List<Optional<FormaDePagamento>> formaDePagamentoList =
+                formaDePagamentoRepository.getByIds(dto.getFormasDePagamento());
+
+        return formaDePagamentoList.stream().map(
+                x -> x.orElseThrow(() -> new RestauranteNaoEncontradoException(
+                        MSG_FORMA_DE_PAGAMENTO_NAO_ENCONTRADA
+                ))).toList();
     }
 }
