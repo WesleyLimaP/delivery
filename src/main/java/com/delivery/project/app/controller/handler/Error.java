@@ -8,6 +8,11 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class Error {
-    private LocalDateTime data;
-    private String meensagem;
+    private ProblemType errorType;
+    private Integer status;
+    private String detalhe;
+    private String tittle;
+    private String userMessage;
+    private LocalDateTime timestamp;
+
 }

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "tb_forma_de_pagamento")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FormaDePagamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,4 +18,6 @@ public class FormaDePagamento {
     @ManyToOne()
     @JoinColumn(name = "restaurante_id")
     private Restaurante restaurante;
+
+
 }
