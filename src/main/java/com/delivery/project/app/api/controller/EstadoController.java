@@ -1,9 +1,7 @@
-package com.delivery.project.app.controller;
+package com.delivery.project.app.api.controller;
 
-import com.delivery.project.app.domain.service.RestauranteService;
-import com.delivery.project.app.dto.restauranteDto.RestauranteDto;
-import com.delivery.project.app.dto.restauranteDto.RestauranteDtoInsert;
-import com.delivery.project.app.dto.restauranteDto.RestauranteDtoSingleSearch;
+import com.delivery.project.app.domain.service.EstadoService;
+import com.delivery.project.app.api.model.dto.estadoDto.EstadoDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,26 +16,27 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
-@RequestMapping(value = "/restaurante")
-public class RestauranteController {
+@RequestMapping("/estados")
+public class EstadoController {
     @Autowired
-    private RestauranteService service;
+    private EstadoService service;
+
 
     @GetMapping
-    public ResponseEntity<List<RestauranteDto>> findAll(){
+    public ResponseEntity<List<EstadoDto>> findAll(){
         return ResponseEntity.ok().body(service.findAll());
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<RestauranteDtoSingleSearch> findById(@PathVariable Long id){
+    public ResponseEntity<EstadoDto> findById(@PathVariable Long id){
         return ResponseEntity.ok().body(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<RestauranteDto> insert (@RequestBody RestauranteDtoInsert dto){
+    public ResponseEntity<EstadoDto> insert (@RequestBody EstadoDto dto){
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .buildAndExpand()
+                .fromCurrentRequest() // pega a URI do POST /restaurantes// acrescenta /{id}
+                .buildAndExpand() // substitui {id}
                 .toUri();
         return ResponseEntity.created(location).body(service.insert(dto));
     }
@@ -54,8 +53,7 @@ public class RestauranteController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<RestauranteDto> update(@PathVariable Long id, @RequestBody RestauranteDtoInsert dto){
+    public ResponseEntity<EstadoDto> update(@PathVariable Long id, @RequestBody EstadoDto dto){
         return ResponseEntity.ok(service.update(id, dto ));
     }
-
 }

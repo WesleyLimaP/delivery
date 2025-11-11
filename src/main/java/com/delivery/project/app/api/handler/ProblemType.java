@@ -1,10 +1,11 @@
-package com.delivery.project.app.controller.handler;
+package com.delivery.project.app.api.handler;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 
 public enum ProblemType {
+    ERRO_DE_CAMPO("erro-de-campo", "erro de campo"),
     ERRO_DE_SISTEMA("erro-interno", "erro interno"),
     ENTIDADE_NAO_ENCONTRADA("enridade-nao-encontrada", "entidade nao encontrada"),
     ERRO_SINTATICO("erro-sintatico", "body do json esta incorreto"),

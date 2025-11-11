@@ -1,7 +1,7 @@
 package com.delivery.project.app.domain.service;
 
 import com.delivery.project.app.domain.model.Estado;
-import com.delivery.project.app.dto.estadoDto.EstadoDto;
+import com.delivery.project.app.api.model.dto.estadoDto.EstadoDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.EstadoNaoEncontradoException;
 import com.delivery.project.app.repository.EstadoRepository;

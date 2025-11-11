@@ -1,7 +1,7 @@
-package com.delivery.project.app.controller;
+package com.delivery.project.app.api.controller;
 
 import com.delivery.project.app.domain.service.CozinhaService;
-import com.delivery.project.app.dto.cozinhaDto.CozinhaDto;
+import com.delivery.project.app.api.model.dto.cozinhaDto.CozinhaDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;

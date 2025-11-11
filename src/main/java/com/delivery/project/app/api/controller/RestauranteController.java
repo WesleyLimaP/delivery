@@ -1,9 +1,12 @@
-package com.delivery.project.app.controller;
+package com.delivery.project.app.api.controller;
 
-import com.delivery.project.app.domain.service.EstadoService;
-import com.delivery.project.app.dto.estadoDto.EstadoDto;
+import com.delivery.project.app.domain.service.RestauranteService;
+import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDto;
+import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoInsert;
+import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoSingleSearch;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,27 +19,26 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
-@RequestMapping("/estados")
-public class EstadoController {
+@RequestMapping(value = "/restaurante")
+public class RestauranteController {
     @Autowired
-    private EstadoService service;
-
+    private RestauranteService service;
 
     @GetMapping
-    public ResponseEntity<List<EstadoDto>> findAll(){
+    public ResponseEntity<List<RestauranteDto>> findAll(){
         return ResponseEntity.ok().body(service.findAll());
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<EstadoDto> findById(@PathVariable Long id){
+    public ResponseEntity<RestauranteDtoSingleSearch> findById(@PathVariable Long id){
         return ResponseEntity.ok().body(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<EstadoDto> insert (@RequestBody EstadoDto dto){
+    public ResponseEntity<RestauranteDto> insert (@RequestBody @Valid RestauranteDtoInsert dto){
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest() // pega a URI do POST /restaurantes// acrescenta /{id}
-                .buildAndExpand() // substitui {id}
+                .fromCurrentRequest()
+                .buildAndExpand()
                 .toUri();
         return ResponseEntity.created(location).body(service.insert(dto));
     }
@@ -53,7 +55,8 @@ public class EstadoController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<EstadoDto> update(@PathVariable Long id, @RequestBody EstadoDto dto){
+    public ResponseEntity<RestauranteDto> update(@PathVariable Long id, @RequestBody @Valid RestauranteDtoInsert dto){
         return ResponseEntity.ok(service.update(id, dto ));
     }
+
 }

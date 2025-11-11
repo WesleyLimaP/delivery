@@ -1,8 +1,8 @@
 package com.delivery.project.app.domain.service;
 
 import com.delivery.project.app.domain.model.Estado;
-import com.delivery.project.app.dto.cidadeDto.CidadeDto;
-import com.delivery.project.app.dto.cidadeDto.CidadeUpdateDto;
+import com.delivery.project.app.api.model.dto.cidadeDto.CidadeDto;
+import com.delivery.project.app.api.model.dto.cidadeDto.CidadeUpdateDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.CidadeNaoEncontradaException;
 import com.delivery.project.app.repository.CidadeRepository;

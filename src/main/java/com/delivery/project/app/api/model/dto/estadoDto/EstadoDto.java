@@ -1,6 +1,7 @@
-package com.delivery.project.app.dto.estadoDto;
+package com.delivery.project.app.api.model.dto.estadoDto;
 
 import com.delivery.project.app.domain.model.Estado;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EstadoDto {
     private Long id;
+    @NotBlank
     private String nome;
 
     public EstadoDto(Estado estado) {

@@ -1,12 +1,16 @@
-package com.delivery.project.app.controller.handler;
+package com.delivery.project.app.api.handler;
 
 import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -15,6 +19,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler {
@@ -32,6 +38,26 @@ public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler 
                 .build();
 
         return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request
+        );
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<?> tratarConstraintViolationException(ConstraintViolationException e, WebRequest request) {
+        Map<String, String> fieldErrors = new HashMap<>();
+        for(ConstraintViolation violation: e.getConstraintViolations()){
+            fieldErrors.put(violation.getPropertyPath().toString(), violation.getMessage());
+        }
+        Error error = Error.builder()
+                .errorType(ProblemType.ERRO_DE_CAMPO)
+                .detalhe("um ou mais campos invalidos")
+                .tittle("erro de campo")
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .userMessage("um ou mais campos invalidos")
+                .fieldErrors(fieldErrors)
+                .build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request
         );
     }
 
@@ -126,6 +152,18 @@ public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler 
 
        return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request
         );
+    }
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        Map<String, String> filds = new HashMap<>();
+        for(FieldError fildss : ex.getFieldErrors()){
+            filds.put(fildss.getField(), fildss.getDefaultMessage());
+        }
+        Error error = Error.builder().tittle("erro de campo")
+                .fieldErrors(filds)
+                .build();
+        return handleExceptionInternal(ex, error, headers, status, request);
     }
 
 

@@ -1,12 +1,10 @@
-package com.delivery.project.app.dto.restauranteDto;
+package com.delivery.project.app.api.model.dto.restauranteDto;
 
 import com.delivery.project.app.domain.model.Restaurante;
-import com.delivery.project.app.dto.cozinhaDto.CozinhaDto;
+import com.delivery.project.app.api.model.dto.cozinhaDto.CozinhaDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor

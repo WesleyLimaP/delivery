@@ -1,7 +1,8 @@
-package com.delivery.project.app.dto.cidadeDto;
+package com.delivery.project.app.api.model.dto.cidadeDto;
 
 import com.delivery.project.app.domain.model.Cidade;
-import com.delivery.project.app.dto.estadoDto.EstadoDto;
+import com.delivery.project.app.api.model.dto.estadoDto.EstadoDto;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CidadeDto {
     private Long id;
+    @NotNull
     private String nome;
+    @NotNull
     private EstadoDto estadoDto;
 
     public CidadeDto(Cidade entity) {

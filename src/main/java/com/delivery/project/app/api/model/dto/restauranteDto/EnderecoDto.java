@@ -1,10 +1,11 @@
-package com.delivery.project.app.dto.restauranteDto;
+package com.delivery.project.app.api.model.dto.restauranteDto;
 
-import com.delivery.project.app.domain.model.Cidade;
 import com.delivery.project.app.domain.model.Endereco;
-import com.delivery.project.app.dto.cidadeDto.CidadeDto;
-import jakarta.persistence.Embeddable;
+import com.delivery.project.app.api.model.dto.cidadeDto.CidadeDto;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,12 +15,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnderecoDto {
+        @NotBlank
+        @Max(9)
         private String cep;
+        @NotBlank
         private String logradouro;
+        @NotBlank
         private String numero;
+        @NotBlank
         private String complemento;
+        @NotBlank
         private String bairro;
         @ManyToOne
+        @NotNull
         private CidadeDto cidade;
 
     public EnderecoDto(Endereco endereco) {
