@@ -160,7 +160,13 @@ public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler 
         for(FieldError fildss : ex.getFieldErrors()){
             filds.put(fildss.getField(), fildss.getDefaultMessage());
         }
-        Error error = Error.builder().tittle("erro de campo")
+        Error error = Error.builder()
+                .detalhe("um ou mais campos invalidos")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .errorType(ProblemType.ERRO_SINTATICO)
+                .userMessage("um ou mais campos invalidos")
+                .timestamp(LocalDateTime.now())
+                .tittle("erro de campo")
                 .fieldErrors(filds)
                 .build();
         return handleExceptionInternal(ex, error, headers, status, request);

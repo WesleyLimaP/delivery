@@ -1,4 +1,6 @@
 package com.delivery.project.app.api.model.dto.formaDePagamentoDto.request;
 
-public record FormaDePagamentoRequestDto(String descricao) {
+import jakarta.validation.constraints.NotBlank;
+
+public record FormaDePagamentoRequestDto(@NotBlank String descricao) {
 }

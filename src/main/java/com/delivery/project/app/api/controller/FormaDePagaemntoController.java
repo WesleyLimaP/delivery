@@ -3,6 +3,7 @@ package com.delivery.project.app.api.controller;
 import com.delivery.project.app.api.model.dto.formaDePagamentoDto.request.FormaDePagamentoRequestDto;
 import com.delivery.project.app.api.model.dto.formaDePagamentoDto.response.FormaDePagamentoResponseDto;
 import com.delivery.project.app.domain.service.FormaDePagamentoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class FormaDePagaemntoController {
         return ResponseEntity.ok(service.getById(id));
     }
     @PostMapping()
-    public ResponseEntity<FormaDePagamentoResponseDto> insert(@RequestBody FormaDePagamentoRequestDto dto){
+    public ResponseEntity<FormaDePagamentoResponseDto> insert(@RequestBody @Valid FormaDePagamentoRequestDto dto){
         FormaDePagamentoResponseDto dtoResponse = service.insert(dto);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest() // pega a URI do POST /restaurantes// acrescenta /{id}
@@ -42,7 +43,7 @@ public class FormaDePagaemntoController {
        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     @PutMapping("/{id}")
-    public ResponseEntity<FormaDePagamentoResponseDto> update(@RequestBody FormaDePagamentoRequestDto dto, @PathVariable Long id){
+    public ResponseEntity<FormaDePagamentoResponseDto> update(@RequestBody @Valid FormaDePagamentoRequestDto dto, @PathVariable Long id){
         FormaDePagamentoResponseDto dtoResponse = service.update(dto, id);
         return ResponseEntity.ok().body(dtoResponse);
     }
