@@ -19,6 +19,9 @@ public class UsuarioPostRequestDto {
     @Max(20)
     @Min(6)
     private String senha;
+    @Email
+    @NotBlank
+    private String email;
     @NotNull
     private List<GrupoUsuarioRequestDto> grupos = new ArrayList<>();
 }

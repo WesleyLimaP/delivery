@@ -28,10 +28,21 @@ INSERT INTO tb_restaurante (nome, taxa_frete, cozinha_id, cep, logradouro, numer
 -- ========================
 -- FORMAS DE PAGAMENTO
 -- ========================
-INSERT INTO tb_forma_de_pagamento (descricao, restaurante_id) VALUES ('Dinheiro', 1);
-INSERT INTO tb_forma_de_pagamento (descricao, restaurante_id) VALUES ('Cartão de Crédito', 1);
-INSERT INTO tb_forma_de_pagamento (descricao, restaurante_id) VALUES ('Pix', 2);
-INSERT INTO tb_forma_de_pagamento (descricao, restaurante_id) VALUES ('Cartão de Débito', 2);
+INSERT INTO tb_forma_de_pagamento (descricao) VALUES ('Dinheiro');
+INSERT INTO tb_forma_de_pagamento (descricao) VALUES ('Cartão de Crédito');
+INSERT INTO tb_forma_de_pagamento (descricao) VALUES ('Pix');
+INSERT INTO tb_forma_de_pagamento (descricao) VALUES ('Cartão de Débito');
+
+-- ========================
+-- RESTAURANTE_FORMA_PAGAMENTO
+-- ========================
+
+insert INTO tb_restaurante_forma_pagamento(restaurante_id, forma_pagamento_id) VALUES (1, 1)
+insert INTO tb_restaurante_forma_pagamento(restaurante_id, forma_pagamento_id) VALUES (1, 2)
+insert INTO tb_restaurante_forma_pagamento(restaurante_id, forma_pagamento_id) VALUES (2, 3)
+insert INTO tb_restaurante_forma_pagamento(restaurante_id, forma_pagamento_id) VALUES (2, 4)
+insert INTO tb_restaurante_forma_pagamento(restaurante_id, forma_pagamento_id) VALUES (3, 1)
+insert INTO tb_restaurante_forma_pagamento(restaurante_id, forma_pagamento_id) VALUES (3, 4)
 
 -- ========================
 -- PRODUTOS
@@ -71,9 +82,9 @@ INSERT INTO tb_grupo_permissao (grupo_id, permissao_id) VALUES (3, 1);
 -- ========================
 -- USUÁRIOS
 -- ========================
-INSERT INTO tb_usuario (nome, senha, data_de_cadastro) VALUES ('João Silva', '123456', '2025-01-10');
-INSERT INTO tb_usuario (nome, senha, data_de_cadastro) VALUES ('Maria Souza', '123456', '2025-01-12');
-INSERT INTO tb_usuario (nome, senha, data_de_cadastro) VALUES ('Carlos Pereira', '123456', '2025-01-14');
+INSERT INTO tb_usuario (nome, senha, email, data_de_cadastro) VALUES ('João Silva','123456','JoãoSilva@gmail.com', '2025-01-10');
+INSERT INTO tb_usuario (nome, senha,email, data_de_cadastro) VALUES ('Maria Souza', '123456', 'MariaSouza@gmail.com', '2025-01-12');
+INSERT INTO tb_usuario (nome, senha,email, data_de_cadastro) VALUES ('Carlos Pereira','123456', 'CarlosPereira@gmail.com','2025-01-14');
 
 -- ========================
 -- USUARIO_GRUPO (relacionamento N:N)

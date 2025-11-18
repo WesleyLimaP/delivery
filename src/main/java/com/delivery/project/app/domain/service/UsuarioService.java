@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -45,8 +46,17 @@ public class UsuarioService {
     @Transactional()
     public UsuarioMaxResponse insert(UsuarioPostRequestDto dto) {
         Usuario usuario = mergeDtoToEntity(dto);
+        verificarEmail(dto.getEmail(), usuario);
         usuario = repository.save(usuario);
         return new UsuarioMaxResponse(usuario);
+
+    }
+
+    private void verificarEmail(String email, Usuario usuario) {
+        Optional<Usuario> emailResult = repository.findByEmail(email);
+        if(repository.findByEmail(email).isPresent() && !usuario.equals(emailResult.get())){
+           throw new EntidadeEmUsoException("o email fornecido ja existe");
+        }
     }
 
     private Usuario mergeDtoToEntity(UsuarioPostRequestDto dto) {
@@ -55,6 +65,7 @@ public class UsuarioService {
         usuario.setNome(dto.getNome());
         usuario.setSenha(dto.getSenha());
         usuario.getGrupos().addAll(grupos);
+        usuario.setEmail(dto.getEmail());
         return usuario;
     }
 
@@ -88,7 +99,9 @@ public class UsuarioService {
     @Transactional
     public UsuarioMaxResponse update(Long id, UsuarioUpdateRequestDto dto) {
         Usuario usuario = getOrElseThrow(id);
+        verificarEmail(dto.email(), usuario);
         usuario.setNome(dto.nome());
+        usuario.setEmail(dto.email());
         return new UsuarioMaxResponse(usuario);
     }
     @Transactional

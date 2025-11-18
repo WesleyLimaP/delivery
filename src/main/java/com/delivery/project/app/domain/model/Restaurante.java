@@ -1,15 +1,14 @@
 package com.delivery.project.app.domain.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_restaurante")
@@ -25,8 +24,13 @@ public class Restaurante {
     @ManyToOne
     @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
-    @OneToMany(mappedBy = "restaurante")
-    private final List<FormaDePagamento> formasDePagamento = new ArrayList<>();
+    @ManyToMany()
+    @JoinTable(
+            name = "tb_restaurante_forma_pagamento",
+            joinColumns = @JoinColumn(name = "restaurante_id"),
+            inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
+    )
+    private Set<FormaDePagamento> formasPagamento = new HashSet<>();
     @Embedded
     private Endereco endereco;
     @OneToMany(mappedBy = "restaurante")

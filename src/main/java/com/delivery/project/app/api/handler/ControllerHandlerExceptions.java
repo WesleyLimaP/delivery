@@ -1,5 +1,7 @@
 package com.delivery.project.app.api.handler;
 
+import com.delivery.project.app.exceptions.AssociacaoException;
+import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -38,6 +40,34 @@ public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler 
                 .build();
 
         return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request
+        );
+    }
+    @ExceptionHandler(EntidadeEmUsoException.class)
+    public ResponseEntity<?> tratarEntidadeEmUsoException(EntidadeEmUsoException e, WebRequest request) {
+        Error error = Error.builder()
+                .errorType(ProblemType.ENTIDADE_EM_USO)
+                .detalhe(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .tittle("entidade em uso")
+                .status(HttpStatus.CONFLICT.value())
+                .userMessage(e.getMessage())
+                .build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.CONFLICT, request
+        );
+    }
+    @ExceptionHandler(AssociacaoException.class)
+    public ResponseEntity<?> tratarAssociacaooException(AssociacaoException e, WebRequest request) {
+        Error error = Error.builder()
+                .errorType(ProblemType.ERRO_DE_ASSOCIACAO)
+                .detalhe(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .tittle(ProblemType.ERRO_DE_ASSOCIACAO.title)
+                .status(HttpStatus.BAD_REQUEST.value())
+                .userMessage(e.getMessage())
+                .build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request
         );
     }
 

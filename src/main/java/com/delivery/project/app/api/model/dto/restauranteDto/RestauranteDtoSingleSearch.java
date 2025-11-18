@@ -22,7 +22,7 @@ public class RestauranteDtoSingleSearch {
         this.nome = restaurante.getNome();
         this.taxaFrete = restaurante.getTaxaFrete();
         this.cozinha = new CozinhaDto(restaurante.getCozinha().getId(), restaurante.getNome());
-        this.formasDePagamento = restaurante.getFormasDePagamento().stream().map(FormaDePagamentoResponseDto::new).toList();
+        this.formasDePagamento = restaurante.getFormasPagamento().stream().map(FormaDePagamentoResponseDto::new).toList();
         this.endereco = new EnderecoDto(restaurante.getEndereco());
     }
 

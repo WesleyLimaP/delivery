@@ -10,7 +10,9 @@ public enum ProblemType {
     ENTIDADE_NAO_ENCONTRADA("enridade-nao-encontrada", "entidade nao encontrada"),
     ERRO_SINTATICO("erro-sintatico", "body do json esta incorreto"),
     PARAMETRO_INVALIDO("parametro-invalido", "parametro de recurso invalido " ),
-    RECURSO_NAO_ENCONTRADO("recurso-invalido", "recurso invalido " );
+    RECURSO_NAO_ENCONTRADO("recurso-invalido", "recurso invalido " ),
+    ENTIDADE_EM_USO("entidade-em-uso", "entidade em uso"),
+    ERRO_DE_ASSOCIACAO("erro-de-associacao", "erro de asssociação");
 
     String uri = "LocalHost:8080//";
     @Getter

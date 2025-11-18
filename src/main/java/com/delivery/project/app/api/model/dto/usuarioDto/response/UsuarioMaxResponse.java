@@ -16,11 +16,13 @@ import java.util.List;
 public class UsuarioMaxResponse {
     private Long id;
     private String nome;
+    private String email;
     private List<GrupoUsuarioResponseDto> grupos = new ArrayList<>();
 
     public UsuarioMaxResponse(Usuario usuario) {
         this.id = usuario.getId();
         this.nome = usuario.getNome();
+        this.email = usuario.getEmail();
         this.getGrupos().addAll(usuario.getGrupos().stream().map(GrupoUsuarioResponseDto::new).toList());
     }
 }

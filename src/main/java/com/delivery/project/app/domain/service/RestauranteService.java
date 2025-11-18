@@ -5,7 +5,9 @@ import com.delivery.project.app.domain.model.Restaurante;
 import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoInsert;
 import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoSingleSearch;
+import com.delivery.project.app.exceptions.AssociacaoException;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
+import com.delivery.project.app.exceptions.FormaDePagamentoEncontradaException;
 import com.delivery.project.app.exceptions.RestauranteNaoEncontradoException;
 import com.delivery.project.app.repository.CozinhaRepository;
 import com.delivery.project.app.repository.FormaDePagamentoRepository;
@@ -46,7 +48,7 @@ public class RestauranteService {
 
     @Transactional
     public RestauranteDto insert(RestauranteDtoInsert dto) {
-        Cozinha cozinha = getCozinhaOrElseThrow(dto);
+        Cozinha cozinha = getOrElseThrow(dto);
         List<FormaDePagamento> formaDePagamentosObj = getFormaDePagamentosObj(dto);
         Restaurante restaurante = new Restaurante();
         marge(restaurante, dto, cozinha, formaDePagamentosObj);
@@ -57,7 +59,7 @@ public class RestauranteService {
         restaurante.setCozinha(cozinha);
         restaurante.setNome(dto.getNome());
         restaurante.setTaxaFrete(dto.getTaxaFrete());
-        restaurante.getFormasDePagamento().addAll(formaDePagamentosObj);
+        restaurante.getFormasPagamento().addAll(formaDePagamentosObj);
         restaurante.setEndereco(dto.getEndereco());
     }
 
@@ -77,7 +79,7 @@ public class RestauranteService {
     public RestauranteDto update(Long id, RestauranteDtoInsert dto) {
         Restaurante restaurante = getOrElseThrow(id);
 
-        Cozinha cozinha = getCozinhaOrElseThrow(dto);
+        Cozinha cozinha = getOrElseThrow(dto);
 
         List<FormaDePagamento> formaDePagamentosObj = getFormaDePagamentosObj(dto);
 
@@ -86,13 +88,17 @@ public class RestauranteService {
 
     }
 
-    private Cozinha getCozinhaOrElseThrow(RestauranteDtoInsert dto) {
+    private Cozinha getOrElseThrow(RestauranteDtoInsert dto) {
         return cozinhaRepository.findById(dto.getCozinhaId()).orElseThrow(() ->
                 new RestauranteNaoEncontradoException(MSG_COZINHA_NAO_ENCONTRADA));
     }
     private Restaurante getOrElseThrow(Long id) {
         return restauranteRepository.getId(id).orElseThrow(() ->
                 new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO));
+    }
+    private FormaDePagamento getFormaPagamentoOrElseThrow(Long formaPagamentoId) {
+        return formaDePagamentoRepository.findById(formaPagamentoId).orElseThrow(() ->
+                new FormaDePagamentoEncontradaException(MSG_FORMA_DE_PAGAMENTO_NAO_ENCONTRADA));
     }
     private List<FormaDePagamento> getFormaDePagamentosObj(RestauranteDtoInsert dto) {
         List<Optional<FormaDePagamento>> formaDePagamentoList =
@@ -102,5 +108,25 @@ public class RestauranteService {
                 x -> x.orElseThrow(() -> new RestauranteNaoEncontradoException(
                         MSG_FORMA_DE_PAGAMENTO_NAO_ENCONTRADA
                 ))).toList();
+    }
+
+    @Transactional
+    public void desassociarFormaPagamento(Long restId, Long formaPagamanetoId) {
+        Restaurante restaurante = getOrElseThrow(restId);
+        FormaDePagamento formaDePagamento = getFormaPagamentoOrElseThrow(formaPagamanetoId);
+        if(!restaurante.getFormasPagamento().contains(formaDePagamento)){
+            throw new AssociacaoException("a forma de pagamento a ser mudada nao pertence a este restaurantw");
+        }
+        restaurante.getFormasPagamento().remove(formaDePagamento);
+
+    }
+    @Transactional
+    public void associarFormaPagamento(Long restId, Long formaPagamanetoId) {
+        Restaurante restaurante = getOrElseThrow(restId);
+        FormaDePagamento formaDePagamento = getFormaPagamentoOrElseThrow(formaPagamanetoId);
+        FormaDePagamento novaFormaPagamentoObj = getFormaPagamentoOrElseThrow(formaPagamanetoId);
+        restaurante.getFormasPagamento().add(novaFormaPagamentoObj);
+
+
     }
 }
