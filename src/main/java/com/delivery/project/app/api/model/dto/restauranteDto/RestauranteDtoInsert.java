@@ -18,7 +18,9 @@ public class RestauranteDtoInsert {
     @NotBlank
     private String nome;
     @NotNull
-    @DecimalMin("1")
+    private boolean aberto;
+    @NotNull
+    @DecimalMin("0")
     private Double taxaFrete;
     @NotNull
     private Long cozinhaId;

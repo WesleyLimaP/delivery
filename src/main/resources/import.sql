@@ -23,7 +23,7 @@ INSERT INTO tb_cidade (nome, estado_id) VALUES ('São Paulo', 2);
 -- ========================
 -- RESTAURANTES
 -- ========================
-INSERT INTO tb_restaurante (nome, taxa_frete, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) VALUES ('Restaurante Sabor Carioca', 5.00, 1, '22290-240', 'Rua das Laranjeiras', '102', 'Apto 301', 'Laranjeiras', 1), ('Churrascaria Boi na Brasa', 8.50, 2, '23090-120', 'Av. Atlântica', '2000', 'Loja A', 'Copacabana', 2), ('Pizzaria Bella Napoli', 6.75, 3, '22790-400', 'Rua Maracanã', '55', 'Casa 2', 'Tijuca', 3);
+INSERT INTO tb_restaurante (nome, aberto, taxa_frete, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) VALUES ('Restaurante Sabor Carioca', true, 5.00, 1, '22290-240', 'Rua das Laranjeiras', '102', 'Apto 301', 'Laranjeiras', 1), ('Churrascaria Boi na Brasa', true,  8.50, 2, '23090-120', 'Av. Atlântica', '2000', 'Loja A', 'Copacabana', 2), ('Pizzaria Bella Napoli', true,  6.75, 3, '22790-400', 'Rua Maracanã', '55', 'Casa 2', 'Tijuca', 3);
 
 -- ========================
 -- FORMAS DE PAGAMENTO
@@ -47,13 +47,24 @@ insert INTO tb_restaurante_forma_pagamento(restaurante_id, forma_pagamento_id) V
 -- ========================
 -- PRODUTOS
 -- ========================
+-- Produtos para restaurante_id 1
 INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Pizza Margherita', 'Pizza com tomate e manjericão', 35.00, true, 1);
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Pizza Calabresa', 'Pizza com calabresa e cebola', 42.00, true, 1);
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Pizza Quatro Queijos', 'Pizza com mussarela, parmesão, gorgonzola e provolone', 48.00, true, 1);
 
-INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Lasanha Bolonhesa', 'Lasanha tradicional com molho de carne', 42.00, true, 1);
+-- Produtos para restaurante_id 2
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Hambúrguer Clássico', 'Pão, carne, queijo e alface', 25.00, true, 2);
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Hambúrguer Bacon', 'Hambúrguer com bacon crocante', 32.00, true, 2);
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Batata Frita', 'Porção de batata frita crocante', 15.00, true, 2);
 
-INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Sushi Combo', '12 peças variadas', 60.00, true, 2);
+-- Produtos para restaurante_id 3
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Sushi Salmão', 'Sushi tradicional com salmão fresco', 28.00, true, 3);
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES 'Temaki Atum', 'Temaki recheado com atum e cream cheese', 22.00, true, 3);
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Yakissoba', 'Massa oriental com legumes e carne', 35.00, true, 3);
 
-INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Picanha na Brasa', 'Acompanha arroz, farofa e vinagrete', 70.00, true, 2);
+
+-- Produto inativo para exemplo
+INSERT INTO tb_produto (nome, descricao, preco, ativo, restaurante_id) VALUES ('Prato do Dia Especial', 'Prato especial temporariamente indisponível', 30.00, false, 2);
 
 -- ========================
 -- PERMISSÕES

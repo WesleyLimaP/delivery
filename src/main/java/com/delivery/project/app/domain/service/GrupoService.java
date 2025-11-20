@@ -3,9 +3,13 @@ package com.delivery.project.app.domain.service;
 import com.delivery.project.app.api.model.dto.grupoDto.request.GrupoRequestDto;
 import com.delivery.project.app.api.model.dto.grupoDto.response.GrupoResponseDto;
 import com.delivery.project.app.domain.model.Grupo;
+import com.delivery.project.app.domain.model.Permissao;
+import com.delivery.project.app.exceptions.AssociacaoException;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.GrupoNaoEncontradoException;
+import com.delivery.project.app.exceptions.PermissaoNaoEncontradaException;
 import com.delivery.project.app.repository.GrupoRepository;
+import com.delivery.project.app.repository.PermissaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,8 @@ public class GrupoService {
         public static final String INTEGRIDADE_REFERENCIAL_MSG = "A entidade nao pode ser apagada pois existe dependencia com outras classes";
         @Autowired
         private GrupoRepository repository;
+        @Autowired
+        private PermissaoRepository permissaoRepository;
 
         @Transactional(readOnly = true)
         public List<GrupoResponseDto> getAll() {
@@ -66,4 +72,42 @@ public class GrupoService {
             }
         }
 
+        @Transactional(readOnly = true)
+    public List<Permissao>findAllPermissoes(Long id) {
+            return getOrElseThrow(id).getPermissoes();
+    }
+
+    @Transactional(readOnly = true)
+    public Object findByIdPermissoes(Long grupoId, Long permissaoId) {
+            Grupo grupo = getOrElseThrow(grupoId);
+            Permissao permissao = getPermissaoOrElseThrow(permissaoId);
+            verificarPermissao(grupo, permissao);
+        return permissao;
+    }
+
+    private void verificarPermissao(Grupo grupo, Permissao permissao) {
+        if(!grupo.getPermissoes().contains(permissao)){
+            throw new AssociacaoException("o grupo nao possui essa permissao");
+        }
+    }
+
+    private Permissao getPermissaoOrElseThrow(Long permissaoId) {
+        return permissaoRepository.findById(permissaoId).orElseThrow(() -> new PermissaoNaoEncontradaException(" a permissao nao foi encontrada"));
+    }
+
+    @Transactional
+    public Object associarPermissao(Long grupoId, Long permissaoId) {
+            Grupo grupo = getOrElseThrow(grupoId);
+            Permissao permissao = getPermissaoOrElseThrow(permissaoId);
+            grupo.getPermissoes().add(permissao);
+            return grupo.getPermissoes();
+    }
+    @Transactional
+    public Object desassociarPermissao(Long grupoId, Long permissaoId) {
+            Grupo grupo = getOrElseThrow(grupoId);
+            Permissao permissao = getPermissaoOrElseThrow(permissaoId);
+            verificarPermissao(grupo, permissao);
+            grupo.getPermissoes().remove(permissao);
+            return grupo.getPermissoes();
+    }
 }

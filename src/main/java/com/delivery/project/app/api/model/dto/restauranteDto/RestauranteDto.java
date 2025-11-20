@@ -12,12 +12,14 @@ import lombok.NoArgsConstructor;
 public class RestauranteDto {
     private Long id;
     private String nome;
+    private boolean aberto;
     private Double taxaFrete;
     private CozinhaDto cozinha;
 
     public RestauranteDto(Restaurante restaurante){
         this.id = restaurante.getId();
         this.nome = restaurante.getNome();
+        this.aberto = restaurante.isAberto();
         this.taxaFrete = restaurante.getTaxaFrete();
         this.cozinha = new CozinhaDto(restaurante.getCozinha().getId(), restaurante.getNome());
 

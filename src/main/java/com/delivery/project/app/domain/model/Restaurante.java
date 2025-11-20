@@ -20,6 +20,7 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    private boolean aberto;
     private Double taxaFrete;
     @ManyToOne
     @JoinColumn(name = "cozinha_id")

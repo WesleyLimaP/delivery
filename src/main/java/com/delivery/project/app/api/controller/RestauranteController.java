@@ -1,5 +1,9 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.model.dto.produtoDto.request.ProdutoRequestDto;
+import com.delivery.project.app.api.model.dto.produtoDto.response.ProdutoResponseDto;
+import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteAbertoDto;
+import com.delivery.project.app.domain.model.Produto;
 import com.delivery.project.app.domain.service.RestauranteService;
 import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoInsert;
@@ -57,6 +61,48 @@ public class RestauranteController {
     @PutMapping("/{id}")
     public ResponseEntity<RestauranteDto> update(@PathVariable Long id, @RequestBody @Valid RestauranteDtoInsert dto){
         return ResponseEntity.ok(service.update(id, dto ));
+    }
+
+    //SUB RECURSOS DE RESTAURANTE
+
+    @GetMapping(value = "/{restId}/produtos/{prodId}")
+    public ResponseEntity<ProdutoResponseDto> findProdutoById(@PathVariable Long restId, @PathVariable Long prodId){
+        return ResponseEntity.ok().body(service.findProdutoById(restId, prodId));
+    }
+    @GetMapping(value = "/{restId}/produtos")
+    public ResponseEntity<List<ProdutoResponseDto>> findAllProduto(@PathVariable Long restId){
+        return ResponseEntity.ok().body(service.findAllProdutoById(restId));
+    }
+    @PostMapping(value = "/{restId}/produtos")
+    public ResponseEntity<ProdutoResponseDto> insertProduto(@PathVariable Long restId, @Valid @RequestBody ProdutoRequestDto dto){
+        ProdutoResponseDto dtoResult = service.insertProduto(restId, dto);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .buildAndExpand(dtoResult.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(dtoResult);
+    }
+    @PutMapping(value = "/{restId}/produtos/{prodId}")
+    public ResponseEntity<ProdutoResponseDto> updateProduto(@PathVariable Long restId, @PathVariable Long prodId, @Valid @RequestBody ProdutoRequestDto dto){
+        return ResponseEntity.ok().body(service.updateProduto(restId, prodId, dto));
+    }
+    @DeleteMapping(value = "/{restId}/produtos/{prodId}")
+    public ResponseEntity<Void> deleteProduto(@PathVariable Long restId, @PathVariable Long prodId){
+        service.deleteProduto(restId, prodId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    //RECURSOS DE ABERTURA E FECHAMENTO DE RESTAURANTE
+
+    @PutMapping(value = "/{id}/abertura")
+    public ResponseEntity<RestauranteAbertoDto> abrirRestaurante(@PathVariable Long id){
+        return ResponseEntity.ok().body(service.abertura(id));
+    }
+    @PutMapping(value = "/{id}/fechamento")
+    public ResponseEntity<RestauranteAbertoDto> fecharRestaurante(@PathVariable Long id){
+        return ResponseEntity.ok().body(service.fechamento(id));
     }
 
 }

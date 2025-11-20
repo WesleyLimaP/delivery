@@ -1,16 +1,18 @@
 package com.delivery.project.app.domain.service;
+import com.delivery.project.app.api.model.dto.produtoDto.request.ProdutoRequestDto;
+import com.delivery.project.app.api.model.dto.produtoDto.response.ProdutoResponseDto;
+import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteAbertoDto;
 import com.delivery.project.app.domain.model.Cozinha;
 import com.delivery.project.app.domain.model.FormaDePagamento;
+import com.delivery.project.app.domain.model.Produto;
 import com.delivery.project.app.domain.model.Restaurante;
 import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoInsert;
 import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoSingleSearch;
-import com.delivery.project.app.exceptions.AssociacaoException;
-import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.FormaDePagamentoEncontradaException;
-import com.delivery.project.app.exceptions.RestauranteNaoEncontradoException;
+import com.delivery.project.app.exceptions.*;
 import com.delivery.project.app.repository.CozinhaRepository;
 import com.delivery.project.app.repository.FormaDePagamentoRepository;
+import com.delivery.project.app.repository.ProdutoRepository;
 import com.delivery.project.app.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,6 +34,8 @@ public class RestauranteService {
     private CozinhaRepository cozinhaRepository;
     @Autowired
     private FormaDePagamentoRepository formaDePagamentoRepository;
+    @Autowired
+    private ProdutoRepository produtoRepository;
 
     @Transactional(readOnly = true)
     public List<RestauranteDto> findAll() {
@@ -59,6 +63,7 @@ public class RestauranteService {
         restaurante.setCozinha(cozinha);
         restaurante.setNome(dto.getNome());
         restaurante.setTaxaFrete(dto.getTaxaFrete());
+        restaurante.setAberto(dto.isAberto());
         restaurante.getFormasPagamento().addAll(formaDePagamentosObj);
         restaurante.setEndereco(dto.getEndereco());
     }
@@ -128,5 +133,87 @@ public class RestauranteService {
         restaurante.getFormasPagamento().add(novaFormaPagamentoObj);
 
 
+    }
+
+    @Transactional(readOnly = true)
+    public ProdutoResponseDto findProdutoById(Long restId, Long prodId) {
+        Restaurante restaurante = getOrElseThrow(restId);
+        Produto produtoRepo = getProdutoOrElseThrow(prodId);
+        verificarProdutoAssociado(restaurante, produtoRepo);
+        return new ProdutoResponseDto(produtoRepo);
+    }
+
+    private Produto getProdutoOrElseThrow(Long prodId) {
+        return produtoRepository.findById(prodId).orElseThrow(() ->
+                new ProdutoNaoEncontradoException("produto nao encontrado"));
+    }
+
+    private void verificarProdutoAssociado(Restaurante restaurante, Produto produtoRepo) {
+        if(!restaurante.getProdutos().contains(produtoRepo)) {
+            new AssociacaoException("produto informado nao pertence a este restaurante");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProdutoResponseDto> findAllProdutoById(Long restId) {
+        Restaurante restaurante = getOrElseThrow(restId);
+        return restaurante.getProdutos().stream().map(ProdutoResponseDto::new).toList();
+    }
+
+    @Transactional
+    public ProdutoResponseDto insertProduto(Long restId, ProdutoRequestDto produtoDto) {
+        Restaurante restaurante = getOrElseThrow(restId);
+        Produto produto = mergeDtoToProduto(produtoDto, restaurante);
+        produto = produtoRepository.save(produto);
+        restaurante.getProdutos().add(produto);
+        return new ProdutoResponseDto(produto);
+
+    }
+    @Transactional
+    public ProdutoResponseDto updateProduto(Long restId, Long prodId, ProdutoRequestDto produtoDto) {
+        Restaurante restaurante = getOrElseThrow(restId);
+        Produto produto = getProdutoOrElseThrow(prodId);
+        mergeDtoToProduto(produtoDto, produto);
+        return new ProdutoResponseDto(produto);
+
+    }
+
+    //merge para insert
+    private Produto mergeDtoToProduto(ProdutoRequestDto dto, Restaurante restaurante){
+        Produto produto = new Produto();
+        produto.setNome(dto.getNome());
+        produto.setDescricao(dto.getDescricao());
+        produto.setAtivo(dto.isAtivo());
+        produto.setPreco(dto.getPreco());
+        produto.setRestaurante(restaurante);
+        return produto;
+    }
+    //merge para update
+    private void mergeDtoToProduto(ProdutoRequestDto dto, Produto produto){
+        produto.setNome(dto.getNome());
+        produto.setDescricao(dto.getDescricao());
+        produto.setAtivo(dto.isAtivo());
+        produto.setPreco(dto.getPreco());
+    }
+
+    @Transactional
+    public void deleteProduto(Long restId, Long prodId) {
+        Restaurante restaurante = getOrElseThrow(restId);
+        Produto produto = getProdutoOrElseThrow(prodId);
+        verificarProdutoAssociado(restaurante, produto);
+        restaurante.getProdutos().remove(produto);
+        produtoRepository.delete(produto);
+    }
+    @Transactional
+    public RestauranteAbertoDto abertura(Long id) {
+        Restaurante restaurante = getOrElseThrow(id);
+        restaurante.setAberto(true);
+        return new RestauranteAbertoDto(restaurante.isAberto());
+    }
+    @Transactional
+    public RestauranteAbertoDto fechamento(Long id) {
+        Restaurante restaurante = getOrElseThrow(id);
+        restaurante.setAberto(false);
+        return new RestauranteAbertoDto(restaurante.isAberto());
     }
 }
