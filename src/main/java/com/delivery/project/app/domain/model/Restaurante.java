@@ -1,9 +1,7 @@
 package com.delivery.project.app.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,9 +10,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tb_restaurante")
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Restaurante {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +31,17 @@ public class Restaurante {
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
     )
-    private Set<FormaDePagamento> formasPagamento = new HashSet<>();
+    private final Set<FormaDePagamento> formasPagamento = new HashSet<>();
     @Embedded
     private Endereco endereco;
     @OneToMany(mappedBy = "restaurante")
-    private List<Produto> produtos = new ArrayList<>();
+    private final List<Produto> produtos = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "tb_usuario_restaurante",
+            joinColumns = @JoinColumn(name = "restaurante_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private final Set<Usuario> usuarios = new HashSet<>();
 
 }

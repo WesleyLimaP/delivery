@@ -12,7 +12,9 @@ public enum ProblemType {
     PARAMETRO_INVALIDO("parametro-invalido", "parametro de recurso invalido " ),
     RECURSO_NAO_ENCONTRADO("recurso-invalido", "recurso invalido " ),
     ENTIDADE_EM_USO("entidade-em-uso", "entidade em uso"),
-    ERRO_DE_ASSOCIACAO("erro-de-associacao", "erro de asssociação");
+    ERRO_DE_MUDANCA_DE_STATUS("erro-de-status", "erro-de-status-do-pedido"),
+    ERRO_DE_ASSOCIACAO("erro-de-associacao", "erro de asssociação"),
+    ERRO_DE_ARMAZENAMENTO("erro-de-armazenamento", "erro de armazenamento" );
 
     String uri = "LocalHost:8080//";
     @Getter

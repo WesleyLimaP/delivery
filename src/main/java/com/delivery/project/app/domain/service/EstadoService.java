@@ -1,10 +1,10 @@
 package com.delivery.project.app.domain.service;
 
 import com.delivery.project.app.domain.model.Estado;
-import com.delivery.project.app.api.model.dto.estadoDto.EstadoDto;
+import com.delivery.project.app.api.model.dto.endereco.estadoDto.EstadoDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.EstadoNaoEncontradoException;
-import com.delivery.project.app.repository.EstadoRepository;
+import com.delivery.project.app.domain.repository.EstadoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

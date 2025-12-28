@@ -1,8 +1,6 @@
 package com.delivery.project.app.api.handler;
 
-import com.delivery.project.app.exceptions.AssociacaoException;
-import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
+import com.delivery.project.app.exceptions.*;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolation;
@@ -42,6 +40,35 @@ public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler 
         return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request
         );
     }
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<?> tratarStorageException(StorageException e, WebRequest request){
+        Error error = Error.builder()
+                .errorType(ProblemType.ERRO_DE_ARMAZENAMENTO)
+                .detalhe("ocorreu um erro de armazenamento")
+                .timestamp(LocalDateTime.now())
+                .tittle("erro de armazenamento")
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .userMessage(e.getMessage())
+                .build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request
+        );
+    }
+
+
+    @ExceptionHandler(FotoNaoEncontradaException.class)
+    public ResponseEntity<?> tratarFotoNaoEncontradaException(FotoNaoEncontradaException e, WebRequest request){
+        Error error = Error.builder()
+                .errorType(ProblemType.ENTIDADE_NAO_ENCONTRADA)
+                .detalhe(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .userMessage(e.getMessage())
+                .build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request
+        );
+    }
     @ExceptionHandler(EntidadeEmUsoException.class)
     public ResponseEntity<?> tratarEntidadeEmUsoException(EntidadeEmUsoException e, WebRequest request) {
         Error error = Error.builder()
@@ -54,6 +81,20 @@ public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler 
                 .build();
 
         return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.CONFLICT, request
+        );
+    }
+    @ExceptionHandler(StatusPedidoException.class)
+    public ResponseEntity<?> tratarEntidadeEmUsoException(StatusPedidoException e, WebRequest request) {
+        Error error = Error.builder()
+                .errorType(ProblemType.ERRO_DE_MUDANCA_DE_STATUS)
+                .detalhe(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .tittle(ProblemType.ERRO_DE_MUDANCA_DE_STATUS.title)
+                .status(HttpStatus.BAD_REQUEST.value())
+                .userMessage(e.getMessage())
+                .build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request
         );
     }
     @ExceptionHandler(AssociacaoException.class)
@@ -142,13 +183,14 @@ public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler 
     }
 
     public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex,HttpHeaders headers, HttpStatusCode status, WebRequest request){
+        assert ex.getRequiredType() != null;
         Error error = Error.builder()
                 .tittle("parametro de recurso errado")
                 .errorType(ProblemType.PARAMETRO_INVALIDO)
                 .timestamp(LocalDateTime.now())
                 .userMessage(MSG_CLIENT_ERROR)
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detalhe("o parametro de url '" + ex.getPropertyName() + "' recebeu o valor '" + ex.getValue() + "', que é de um tipo invalido. Corrija e informe um valor compativel com o tipo " + ex.getName().getClass().getSimpleName())
+                .detalhe("o parametro de url '" + ex.getPropertyName() + "' recebeu o valor '" + ex.getValue() + "', que é de um tipo invalido. Corrija e informe um valor compativel com o tipo " + ex.getRequiredType().getSimpleName())
                 .build();
 
         return handleExceptionInternal(ex, error, headers, status, request);
@@ -180,7 +222,7 @@ public class ControllerHandlerExceptions extends ResponseEntityExceptionHandler 
                 .tittle("erro interno no sistema")
                 .build();
 
-       return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request
+       return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request
         );
     }
     @Override

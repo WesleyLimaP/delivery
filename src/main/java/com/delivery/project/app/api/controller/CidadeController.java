@@ -1,8 +1,8 @@
 package com.delivery.project.app.api.controller;
 
 import com.delivery.project.app.domain.service.CidadeService;
-import com.delivery.project.app.api.model.dto.cidadeDto.CidadeDto;
-import com.delivery.project.app.api.model.dto.cidadeDto.CidadeUpdateDto;
+import com.delivery.project.app.api.model.dto.endereco.cidadeDto.response.CidadeDto;
+import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeUpdateDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,12 +2,11 @@ package com.delivery.project.app.api.controller;
 
 import com.delivery.project.app.api.model.dto.produtoDto.request.ProdutoRequestDto;
 import com.delivery.project.app.api.model.dto.produtoDto.response.ProdutoResponseDto;
-import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteAbertoDto;
-import com.delivery.project.app.domain.model.Produto;
+import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteAbertoDto;
 import com.delivery.project.app.domain.service.RestauranteService;
-import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDto;
-import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoInsert;
-import com.delivery.project.app.api.model.dto.restauranteDto.RestauranteDtoSingleSearch;
+import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
+import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteDtoInsert;
+import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDtoSingleSearch;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
 import jakarta.validation.Valid;

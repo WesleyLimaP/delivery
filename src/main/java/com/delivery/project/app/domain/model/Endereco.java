@@ -1,6 +1,7 @@
 package com.delivery.project.app.domain.model;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ public class Endereco {
     private String numero;
     private String complemento;
     private String bairro;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cidade_id")
     private Cidade cidade;
 

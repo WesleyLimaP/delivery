@@ -1,12 +1,12 @@
 package com.delivery.project.app.domain.service;
 
 import com.delivery.project.app.domain.model.Estado;
-import com.delivery.project.app.api.model.dto.cidadeDto.CidadeDto;
-import com.delivery.project.app.api.model.dto.cidadeDto.CidadeUpdateDto;
+import com.delivery.project.app.api.model.dto.endereco.cidadeDto.response.CidadeDto;
+import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeUpdateDto;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.CidadeNaoEncontradaException;
-import com.delivery.project.app.repository.CidadeRepository;
-import com.delivery.project.app.repository.EstadoRepository;
+import com.delivery.project.app.domain.repository.CidadeRepository;
+import com.delivery.project.app.domain.repository.EstadoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -71,7 +71,7 @@ public class CidadeService {
 
     }
 
-    private Cidade findByIdOrElseThrow(Long id) {
+    public Cidade findByIdOrElseThrow(Long id) {
         return repository.findById(id).orElseThrow(() ->
                 new CidadeNaoEncontradaException(ID_NAO_ENCONTRADO));
     }

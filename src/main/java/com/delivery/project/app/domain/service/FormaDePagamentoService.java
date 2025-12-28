@@ -1,11 +1,11 @@
 package com.delivery.project.app.domain.service;
 
-import com.delivery.project.app.api.model.dto.formaDePagamentoDto.request.FormaDePagamentoRequestDto;
+import com.delivery.project.app.api.model.dto.formaDePagamentoDto.request.FormaDePagamentoDescricaoDto;
 import com.delivery.project.app.api.model.dto.formaDePagamentoDto.response.FormaDePagamentoResponseDto;
 import com.delivery.project.app.domain.model.FormaDePagamento;
 import com.delivery.project.app.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.exceptions.FormaDePagamentoEncontradaException;
-import com.delivery.project.app.repository.FormaDePagamentoRepository;
+import com.delivery.project.app.domain.repository.FormaDePagamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -38,18 +38,18 @@ public class FormaDePagamentoService {
     }
 
     @Transactional
-    public FormaDePagamentoResponseDto insert(FormaDePagamentoRequestDto dto) {
+    public FormaDePagamentoResponseDto insert(FormaDePagamentoDescricaoDto dto) {
         FormaDePagamento formaDePagamento = new FormaDePagamento();
         margeDtoToEntity(dto, formaDePagamento);
 
         formaDePagamento = repository.save(formaDePagamento);
         return new FormaDePagamentoResponseDto(formaDePagamento);
     }
-    private void margeDtoToEntity(FormaDePagamentoRequestDto dto, FormaDePagamento formaDePagamento){
+    private void margeDtoToEntity(FormaDePagamentoDescricaoDto dto, FormaDePagamento formaDePagamento){
         formaDePagamento.setDescricao(dto.descricao());
     }
     @Transactional
-    public FormaDePagamentoResponseDto update(FormaDePagamentoRequestDto dto, Long id) {
+    public FormaDePagamentoResponseDto update(FormaDePagamentoDescricaoDto dto, Long id) {
         FormaDePagamento formaDePagamento = getOrElseThrow(id);
         margeDtoToEntity(dto, formaDePagamento);
         return new FormaDePagamentoResponseDto(formaDePagamento);
