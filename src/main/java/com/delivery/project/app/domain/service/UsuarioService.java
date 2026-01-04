@@ -8,10 +8,10 @@ import com.delivery.project.app.api.model.dto.usuarioDto.request.UsuarioUpdateSe
 import com.delivery.project.app.api.model.dto.usuarioDto.response.GrupoUsuarioResponseDto;
 import com.delivery.project.app.api.model.dto.usuarioDto.response.UsuarioMaxResponse;
 import com.delivery.project.app.api.model.dto.usuarioDto.response.UsuarioMinResponse;
+import com.delivery.project.app.domain.exceptions.*;
 import com.delivery.project.app.domain.model.Grupo;
 import com.delivery.project.app.domain.model.Restaurante;
 import com.delivery.project.app.domain.model.Usuario;
-import com.delivery.project.app.exceptions.*;
 import com.delivery.project.app.domain.repository.GrupoRepository;
 import com.delivery.project.app.domain.repository.RestauranteRepository;
 import com.delivery.project.app.domain.repository.UsuarioRepository;

@@ -1,6 +1,6 @@
 package com.delivery.project.app.api.handler;
 
-import com.delivery.project.app.exceptions.*;
+import com.delivery.project.app.domain.exceptions.*;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolation;

@@ -93,7 +93,7 @@ INSERT INTO tb_grupo_permissao (grupo_id, permissao_id) VALUES (3, 1);
 -- ========================
 -- USUÁRIOS
 -- ========================
-INSERT INTO tb_usuario (nome, senha, email, data_de_cadastro) VALUES ('João Silva','123456','JoãoSilva@gmail.com', '2025-01-10');
+INSERT INTO tb_usuario (nome, senha, email, data_de_cadastro) VALUES ('wesley','123456','wesleylima029@gmail.com', '2025-01-10');
 INSERT INTO tb_usuario (nome, senha,email, data_de_cadastro) VALUES ('Maria Souza', '123456', 'MariaSouza@gmail.com', '2025-01-12');
 INSERT INTO tb_usuario (nome, senha,email, data_de_cadastro) VALUES ('Carlos Pereira','123456', 'CarlosPereira@gmail.com','2025-01-14');
 

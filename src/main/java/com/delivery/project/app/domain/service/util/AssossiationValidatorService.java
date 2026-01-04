@@ -3,7 +3,7 @@ package com.delivery.project.app.domain.service.util;
 import com.delivery.project.app.domain.model.FormaDePagamento;
 import com.delivery.project.app.domain.model.Produto;
 import com.delivery.project.app.domain.model.Restaurante;
-import com.delivery.project.app.exceptions.AssociacaoException;
+import com.delivery.project.app.domain.exceptions.AssociacaoException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

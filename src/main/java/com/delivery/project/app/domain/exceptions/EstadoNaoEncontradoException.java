@@ -1,4 +1,4 @@
-package com.delivery.project.app.exceptions;
+package com.delivery.project.app.domain.exceptions;
 
 public class EstadoNaoEncontradoException extends EntidadeNaoEncontradaException {
     public EstadoNaoEncontradoException(String msg) {

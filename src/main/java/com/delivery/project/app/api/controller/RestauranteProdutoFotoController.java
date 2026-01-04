@@ -4,14 +4,12 @@ import com.delivery.project.app.api.model.dto.filesDto.ImageDto;
 import com.delivery.project.app.api.model.dto.fotoProduto.FotoProdutoDto;
 import com.delivery.project.app.domain.service.FotoProdutoService;
 import com.delivery.project.app.domain.service.FotoStorageService;
-import com.delivery.project.app.exceptions.FotoNaoEncontradaException;
 import jakarta.validation.Valid;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 

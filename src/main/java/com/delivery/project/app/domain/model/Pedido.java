@@ -1,9 +1,12 @@
 package com.delivery.project.app.domain.model;
 
-import com.delivery.project.app.exceptions.StatusPedidoException;
+import com.delivery.project.app.domain.events.PedidoCanceladoEvent;
+import com.delivery.project.app.domain.events.PedidoConfirmadoEvent;
+import com.delivery.project.app.domain.exceptions.StatusPedidoException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,8 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
-@EqualsAndHashCode(of = "id")
-public class Pedido {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class Pedido extends AbstractAggregateRoot<Pedido> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -63,9 +66,20 @@ public class Pedido {
                 new RuntimeException("nao foi possivel fazer a soma"));
         return subTotal;
     }
-    public void alterarStatus(StatusPedido status){
-        verificarStatusAnterior(this, status);
-        this.setStatus(status);
+
+    public void confirmar(){
+        this.setStatus(StatusPedido.CONFIRMADO);
+        this.setDataConfirmacao(LocalDate.now());
+        this.registerEvent(new PedidoConfirmadoEvent(this));
+    }
+    public void cancelar(){
+        this.setStatus(StatusPedido.CANCELADO);
+        this.setDataCancelamento(LocalDate.now());
+        this.registerEvent(new PedidoCanceladoEvent(this));
+    }
+    public void entregar(){
+        this.setStatus(StatusPedido.ENTREGUE);
+        this.setDataEntrega(LocalDate.now());
     }
     private void verificarStatusAnterior(Pedido pedido, StatusPedido status){
         if (!status.getStatusAnterior().contains(pedido.status)){

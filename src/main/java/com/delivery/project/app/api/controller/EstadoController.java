@@ -2,8 +2,8 @@ package com.delivery.project.app.api.controller;
 
 import com.delivery.project.app.domain.service.EstadoService;
 import com.delivery.project.app.api.model.dto.endereco.estadoDto.EstadoDto;
-import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
+import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
+import com.delivery.project.app.domain.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

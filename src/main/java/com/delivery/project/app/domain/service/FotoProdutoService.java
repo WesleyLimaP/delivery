@@ -4,13 +4,12 @@ import com.delivery.project.app.api.model.dto.filesDto.ImageDto;
 import com.delivery.project.app.api.model.dto.fotoProduto.FotoProdutoDto;
 import com.delivery.project.app.domain.repository.ProdutoRepository;
 import com.delivery.project.app.domain.service.util.mapper.fotoProduto.FotoProdutoMapper;
-import com.delivery.project.app.exceptions.FotoNaoEncontradaException;
+import com.delivery.project.app.domain.exceptions.FotoNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 @Service
 public class FotoProdutoService {

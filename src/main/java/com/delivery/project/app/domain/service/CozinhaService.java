@@ -1,8 +1,8 @@
 package com.delivery.project.app.domain.service;
 import com.delivery.project.app.domain.model.Cozinha;
 import com.delivery.project.app.api.model.dto.cozinhaDto.CozinhaDto;
-import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.CozinhaNaoEncontradaException;
+import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
+import com.delivery.project.app.domain.exceptions.CozinhaNaoEncontradaException;
 import com.delivery.project.app.domain.repository.CozinhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

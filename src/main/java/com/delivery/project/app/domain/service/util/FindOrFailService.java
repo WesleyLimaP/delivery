@@ -3,10 +3,10 @@ package com.delivery.project.app.domain.service.util;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteDtoInsert;
 import com.delivery.project.app.domain.model.*;
 import com.delivery.project.app.domain.repository.*;
-import com.delivery.project.app.exceptions.FormaDePagamentoEncontradaException;
-import com.delivery.project.app.exceptions.PedidoNaoEncontradoException;
-import com.delivery.project.app.exceptions.ProdutoNaoEncontradoException;
-import com.delivery.project.app.exceptions.RestauranteNaoEncontradoException;
+import com.delivery.project.app.domain.exceptions.FormaDePagamentoEncontradaException;
+import com.delivery.project.app.domain.exceptions.PedidoNaoEncontradoException;
+import com.delivery.project.app.domain.exceptions.ProdutoNaoEncontradoException;
+import com.delivery.project.app.domain.exceptions.RestauranteNaoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

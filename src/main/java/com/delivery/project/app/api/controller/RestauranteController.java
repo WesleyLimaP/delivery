@@ -7,8 +7,8 @@ import com.delivery.project.app.domain.service.RestauranteService;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteDtoInsert;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDtoSingleSearch;
-import com.delivery.project.app.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.exceptions.EntidadeNaoEncontradaException;
+import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
+import com.delivery.project.app.domain.exceptions.EntidadeNaoEncontradaException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,8 @@ public class RestauranteController {
 
     @GetMapping
     public ResponseEntity<List<RestauranteDto>> findAll(){
-        return ResponseEntity.ok().body(service.findAll());
+        return ResponseEntity
+                .ok().body(service.findAll());
     }
 
     @GetMapping(value = "/{id}")

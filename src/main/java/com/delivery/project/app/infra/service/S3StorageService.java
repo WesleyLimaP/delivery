@@ -6,19 +6,13 @@ import com.amazonaws.services.s3.model.*;
 import com.delivery.project.app.api.model.dto.filesDto.ImageDto;
 import com.delivery.project.app.core.storage.StorageConfiguration;
 import com.delivery.project.app.domain.service.FotoStorageService;
-import com.delivery.project.app.exceptions.AmazonS3StorageException;
-import net.sf.jasperreports.repo.InputStreamResource;
+import com.delivery.project.app.domain.exceptions.AmazonS3StorageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriBuilder;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
-import java.util.logging.StreamHandler;
 
 @Service
 @Primary
