@@ -3,14 +3,15 @@ package com.delivery.project.app.api.model.dto.endereco.cidadeDto.response;
 import com.delivery.project.app.domain.model.Cidade;
 import com.delivery.project.app.api.model.dto.endereco.estadoDto.EstadoDto;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
-@Data
+@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CidadeDto {
+public class CidadeDto extends RepresentationModel<CidadeDto> {
     private Long id;
     @NotNull
     private String nome;

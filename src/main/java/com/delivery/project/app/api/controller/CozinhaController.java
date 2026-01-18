@@ -1,9 +1,12 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.controller.doc.CozinhaControllerDoc;
+import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.CozinhaService;
 import com.delivery.project.app.api.model.dto.cozinhaDto.CozinhaDto;
 import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.domain.exceptions.EntidadeNaoEncontradaException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +20,7 @@ import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 @RequestMapping("/cozinhas")
-public class CozinhaController {
+public class CozinhaController implements CozinhaControllerDoc {
     @Autowired
     private CozinhaService service;
 
@@ -33,12 +36,10 @@ public class CozinhaController {
     }
 
     @PostMapping
-    public ResponseEntity<CozinhaDto> insert (@RequestBody CozinhaDto dto){
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest() // pega a URI do POST /restaurantes// acrescenta /{id}
-                .buildAndExpand() // substitui {id}
-                .toUri();
-        return ResponseEntity.created(location).body(service.insert(dto));
+    public ResponseEntity<CozinhaDto> insert (@RequestBody @Valid CozinhaDto dto){
+        var response = service.insert(dto);
+        URI location = LocationBulder.create(response.getId());
+        return ResponseEntity.created(location).body(response);
     }
 
     @DeleteMapping("/{id}")
@@ -53,7 +54,7 @@ public class CozinhaController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<CozinhaDto> update(@PathVariable Long id, @RequestBody CozinhaDto dto){
+    public ResponseEntity<CozinhaDto> update(@PathVariable Long id, @RequestBody @Valid CozinhaDto dto){
         return ResponseEntity.ok(service.update(id, dto ));
     }
 }

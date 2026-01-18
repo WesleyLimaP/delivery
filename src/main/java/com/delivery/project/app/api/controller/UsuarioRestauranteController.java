@@ -1,5 +1,6 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.controller.doc.UsuarioRestauranteControllerDoc;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
 import com.delivery.project.app.domain.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/usuarios/{usuarioId}/restaurantes")
-public class UsuarioRestauranteController {
+public class UsuarioRestauranteController implements UsuarioRestauranteControllerDoc {
     @Autowired
     private UsuarioService service;
 
@@ -29,10 +30,10 @@ public class UsuarioRestauranteController {
         service.desassociarRestaurante(usuarioId, restauranteId);
         return ResponseEntity.noContent().build();
     }
-    @PutMapping(value = "/{restauranteId}")
-    public ResponseEntity<RestauranteDto> associar(@PathVariable Long usuarioId, @PathVariable Long restauranteId){
+    @PutMapping("/{restauranteId}")
+    public ResponseEntity<Void> associar(@PathVariable Long usuarioId, @PathVariable Long restauranteId){
         service.associarRestaurante(usuarioId, restauranteId);
-        return ResponseEntity.ok(service.associarRestaurante(usuarioId, restauranteId));
+        return ResponseEntity.noContent().build();
 
     }
 

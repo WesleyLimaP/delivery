@@ -1,5 +1,7 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.controller.doc.EstadoControllerDoc;
+import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.EstadoService;
 import com.delivery.project.app.api.model.dto.endereco.estadoDto.EstadoDto;
 import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
@@ -17,7 +19,7 @@ import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 @RequestMapping("/estados")
-public class EstadoController {
+public class EstadoController implements EstadoControllerDoc {
     @Autowired
     private EstadoService service;
 
@@ -34,11 +36,9 @@ public class EstadoController {
 
     @PostMapping
     public ResponseEntity<EstadoDto> insert (@RequestBody EstadoDto dto){
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest() // pega a URI do POST /restaurantes// acrescenta /{id}
-                .buildAndExpand() // substitui {id}
-                .toUri();
-        return ResponseEntity.created(location).body(service.insert(dto));
+        var response = service.insert(dto);
+        URI location = LocationBulder.create(response.getId());
+        return ResponseEntity.created(location).body(response);
     }
 
     @DeleteMapping("/{id}")

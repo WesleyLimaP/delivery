@@ -1,7 +1,9 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.controller.doc.RestauranteProdutoFotoControllerDoc;
 import com.delivery.project.app.api.model.dto.filesDto.ImageDto;
 import com.delivery.project.app.api.model.dto.fotoProduto.FotoProdutoDto;
+import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.FotoProdutoService;
 import com.delivery.project.app.domain.service.FotoStorageService;
 import jakarta.validation.Valid;
@@ -19,18 +21,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("restaurantes/{restauranteId}/produtos/{produtoId}/fotos")
-public class RestauranteProdutoFotoController {
+public class RestauranteProdutoFotoController implements RestauranteProdutoFotoControllerDoc {
     @Autowired
     private FotoProdutoService service;
 
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FotoProdutoDto> insert(@PathVariable Long restauranteId, @PathVariable Long produtoId, @Valid ImageDto image) throws IOException {
         var response = service.insert(restauranteId, produtoId, image);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .buildAndExpand(response.getProdutoId())
-                .toUri();
-
+        URI location = LocationBulder.create(response.getProdutoId());
         return ResponseEntity.created(location).body(response);
 
     }
@@ -49,7 +47,7 @@ public class RestauranteProdutoFotoController {
     }
 
     @SneakyThrows
-    @GetMapping
+    @GetMapping(produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> getImage(@PathVariable Long restauranteId, @PathVariable Long produtoId, @RequestHeader(name = "Accept") String acceptHeacers) {
 
         var response = service.getFoto(restauranteId, produtoId);

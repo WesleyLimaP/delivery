@@ -1,9 +1,11 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.controller.doc.PedidoControllerDoc;
 import com.delivery.project.app.api.model.dto.pedidoDto.request.PedidoRequestDto;
 import com.delivery.project.app.api.model.dto.pedidoDto.response.PedidoDto;
 import com.delivery.project.app.api.model.dto.pedidoDto.response.PedidoMaxDto;
 import com.delivery.project.app.api.model.filter.PedidoFilter;
+import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +13,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 @RequestMapping("/pedidos")
-public class PedidoController {
+public class PedidoController implements PedidoControllerDoc {
     @Autowired
     private PedidoService service;
 
@@ -32,21 +36,27 @@ public class PedidoController {
     public ResponseEntity<PedidoMaxDto> findById(@PathVariable Long id){
         return ResponseEntity.ok().body(service.findById(id));
     }
-    @PutMapping(value = "/{id}/confirmado")
-    public ResponseEntity<PedidoMaxDto> updateStatusToConfirmado(@PathVariable Long id){
-        return ResponseEntity.ok().body(service.UpdateStatusToConfirmado(id));
+    @PutMapping(value = "/{id}/confirmacao")
+    public ResponseEntity<Void> confirmarPedido(@PathVariable Long id){
+        service.UpdateStatusToConfirmado(id);
+        return ResponseEntity.noContent().build();
     }
     @PutMapping(value = "/{id}/entregue")
-    public ResponseEntity<PedidoMaxDto> updateStatusToEntregue(@PathVariable Long id){
-        return ResponseEntity.ok().body(service.UpdateStatusToEntregue(id));
+    public ResponseEntity<Void> entregarPedido(@PathVariable Long id){
+        service.UpdateStatusToEntregue(id);
+        return ResponseEntity.noContent().build();
     }
-    @PutMapping(value = "/{id}/cancelado")
-    public ResponseEntity<PedidoMaxDto> updateStatusToCancelado(@PathVariable Long id){
-        return ResponseEntity.ok().body(service.UpdateStatusToCancelado(id));
+    @PutMapping(value = "/{id}/cancelamento")
+    public ResponseEntity<Void> cancelarPedido(@PathVariable Long id){
+        service.UpdateStatusToCancelado(id);
+        return ResponseEntity.noContent().build();
     }
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<PedidoMaxDto> insert(@RequestBody @Valid PedidoRequestDto dto){
-        return ResponseEntity.ok().body(service.insert(dto));
+        var response = service.insert(dto);
+        URI location = LocationBulder.create(response.getId());
+
+        return ResponseEntity.created(location).body(response);
     }
 
 

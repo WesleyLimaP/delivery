@@ -1,14 +1,15 @@
 package com.delivery.project.app.api.controller;
 
 
-import com.delivery.project.app.api.model.dto.cozinhaDto.CozinhaDto;
+import com.delivery.project.app.api.controller.doc.UsuarioControllerDoc;
 import com.delivery.project.app.api.model.dto.usuarioDto.request.UsuarioPostRequestDto;
 import com.delivery.project.app.api.model.dto.usuarioDto.request.UsuarioUpdateRequestDto;
 import com.delivery.project.app.api.model.dto.usuarioDto.request.UsuarioUpdateSenhaDto;
 import com.delivery.project.app.api.model.dto.usuarioDto.response.UsuarioMaxResponse;
 import com.delivery.project.app.api.model.dto.usuarioDto.response.UsuarioMinResponse;
-import com.delivery.project.app.domain.model.Usuario;
+import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-public class UsuarioController {
+public class UsuarioController implements UsuarioControllerDoc {
     @Autowired
     private UsuarioService service;
-
 
     @GetMapping
     public ResponseEntity<List<UsuarioMinResponse>> findAll(){
@@ -35,12 +35,9 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioMaxResponse> insert (@RequestBody UsuarioPostRequestDto dto){
+    public ResponseEntity<UsuarioMaxResponse> insert (@RequestBody @Valid UsuarioPostRequestDto dto){
         UsuarioMaxResponse dtoResponse = service.insert(dto);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest() // pega a URI do POST /restaurantes// acrescenta /{id}
-                .buildAndExpand() // substitui {id}
-                .toUri();
+        URI location = LocationBulder.create(dtoResponse.getId());
         return ResponseEntity.created(location).body(dtoResponse);
     }
 
@@ -51,11 +48,11 @@ public class UsuarioController {
 
     }
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioMaxResponse> update(@PathVariable Long id, @RequestBody UsuarioUpdateRequestDto dto){
+    public ResponseEntity<UsuarioMaxResponse> update(@PathVariable Long id, @RequestBody @Valid UsuarioUpdateRequestDto dto){
         return ResponseEntity.ok(service.update(id, dto ));
     }
     @PutMapping("/{id}/senha")
-    public ResponseEntity<UsuarioMaxResponse> update(@PathVariable Long id, @RequestBody UsuarioUpdateSenhaDto dto){
+    public ResponseEntity<UsuarioMaxResponse> updateSenha(@PathVariable Long id, @RequestBody @Valid UsuarioUpdateSenhaDto dto){
         return ResponseEntity.ok(service.update(id, dto ));
     }
 }

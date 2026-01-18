@@ -1,5 +1,6 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.controller.doc.RestauranteFormaDePagamentoControllerDoc;
 import com.delivery.project.app.api.model.dto.formaDePagamentoDto.response.FormaDePagamentoResponseDto;
 import com.delivery.project.app.domain.service.RestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +11,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/restaurante/{restauranteId}/forma-de-pagamento")
-public class RestauranteFormaDePagamentoController {
+public class RestauranteFormaDePagamentoController implements RestauranteFormaDePagamentoControllerDoc {
     @Autowired
     private RestauranteService service;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<FormaDePagamentoResponseDto>> findById(@PathVariable Long restauranteId){
         return ResponseEntity.ok().body(service.findById(restauranteId).getFormasDePagamento());
     }
 
-    @DeleteMapping("/{formaPagamentoId}")
-    public ResponseEntity<?> desassociar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId){
-        service.desassociarFormaPagamento(restauranteId, formaPagamentoId);
+    @DeleteMapping("/{formaDePagamentoId}")
+    public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long formaDePagamentoId){
+        service.desassociarFormaPagamento(restauranteId, formaDePagamentoId);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{formaPagamentoId}")

@@ -1,8 +1,10 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.controller.doc.RestauranteControllerDoc;
 import com.delivery.project.app.api.model.dto.produtoDto.request.ProdutoRequestDto;
 import com.delivery.project.app.api.model.dto.produtoDto.response.ProdutoResponseDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteAbertoDto;
+import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.RestauranteService;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteDtoInsert;
@@ -11,6 +13,7 @@ import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.domain.exceptions.EntidadeNaoEncontradaException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,19 +21,22 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 @RequestMapping(value = "/restaurante")
-public class RestauranteController {
+public class RestauranteController implements RestauranteControllerDoc {
     @Autowired
     private RestauranteService service;
 
     @GetMapping
     public ResponseEntity<List<RestauranteDto>> findAll(){
         return ResponseEntity
-                .ok().body(service.findAll());
+                .ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(service.findAll());
     }
 
     @GetMapping(value = "/{id}")
@@ -40,10 +46,7 @@ public class RestauranteController {
 
     @PostMapping
     public ResponseEntity<RestauranteDto> insert (@RequestBody @Valid RestauranteDtoInsert dto){
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .buildAndExpand()
-                .toUri();
+        URI location = LocationBulder.create(service.insert(dto).getId());
         return ResponseEntity.created(location).body(service.insert(dto));
     }
 

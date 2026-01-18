@@ -1,8 +1,11 @@
 package com.delivery.project.app.api.controller;
 
+import com.delivery.project.app.api.controller.doc.EstatisticaControllerDoc;
 import com.delivery.project.app.api.model.dto.estatisticaDto.EstatisticaDto;
 import com.delivery.project.app.domain.service.EstatisticaService;
 import com.delivery.project.app.domain.service.VendasReportService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,14 +22,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/estatisticas")
-public class EstatisticaController {
+@Tag(name = "Estatísticas", description = "crud de Estatísticas")
+public class EstatisticaController implements EstatisticaControllerDoc {
     @Autowired
     private EstatisticaService service;
     @Autowired
     private VendasReportService reportService;
 
-    @GetMapping(value = "/total", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<EstatisticaDto>> getTotalPedidosByDate(@RequestParam(required = false) Long restauranteId,
+
+    public ResponseEntity<List<EstatisticaDto>> gerarRelatorioPedidosPorData(@RequestParam(required = false) Long restauranteId,
                                                                       @RequestParam(required = false)
                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                                       LocalDate dataInicio,
@@ -35,7 +39,7 @@ public class EstatisticaController {
 
     }
     @GetMapping(value = "/total", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> getTotalPedidosByDatePdf  (@RequestParam(required = false) Long restauranteId,
+    public ResponseEntity<byte[]> gerarRelatorioPedidosPorDataPdf(@RequestParam(required = false) Long restauranteId,
                                                              @RequestParam(required = false)
                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                                       LocalDate dataInicio,

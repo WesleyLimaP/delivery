@@ -4,10 +4,11 @@ import com.delivery.project.app.domain.model.Estado;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @NoArgsConstructor
-public class EstadoDto {
+public class EstadoDto extends RepresentationModel<EstadoDto> {
     private Long id;
     @NotBlank
     private String nome;
