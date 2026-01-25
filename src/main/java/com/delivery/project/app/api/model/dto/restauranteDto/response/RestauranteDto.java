@@ -5,11 +5,12 @@ import com.delivery.project.app.api.model.dto.cozinhaDto.CozinhaDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestauranteDto {
+public class RestauranteDto extends RepresentationModel<RestauranteDto> {
     private Long id;
     private String nome;
     private boolean aberto;

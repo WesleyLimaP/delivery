@@ -1,8 +1,6 @@
 package com.delivery.project.app.domain.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,9 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.ManyToAny;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,5 +38,11 @@ public class Usuario {
     private  Set<Restaurante> restaurantes = new HashSet<>();
 
 
+    public boolean verificarAssociacaoGrupo(Grupo grupo) {
+        return this.getGrupos().contains(grupo);
+    }
+    public boolean verificarAssociacaoRestaurante(Restaurante restaurante) {
+        return this.getRestaurantes().contains(restaurante);
+    }
 
 }

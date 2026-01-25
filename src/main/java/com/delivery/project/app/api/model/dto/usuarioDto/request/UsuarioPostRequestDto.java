@@ -16,12 +16,10 @@ import java.util.List;
 public class UsuarioPostRequestDto {
     private String nome;
     @NotBlank
-    @Max(20)
-    @Min(6)
     private String senha;
     @Email
     @NotBlank
     private String email;
     @NotNull
-    private List<GrupoUsuarioRequestDto> grupos = new ArrayList<>();
+    private List<GrupoUsuarioRequestDto> grupos;
 }

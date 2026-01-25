@@ -1,4 +1,5 @@
 package com.delivery.project.app.domain.service;
+import com.delivery.project.app.api.assembler.CozinhaAssembler;
 import com.delivery.project.app.domain.model.Cozinha;
 import com.delivery.project.app.api.model.dto.cozinhaDto.CozinhaDto;
 import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
@@ -17,19 +18,20 @@ public class CozinhaService {
     public static final String MSG_INTEGRIDADE_REFERENCIAL = "A entidade nao pode ser apagada pois existe dependencia com outras classes";
     @Autowired
     private CozinhaRepository repository;
+    @Autowired
+    private CozinhaAssembler assembler;
 
 
     @Transactional(readOnly = true)
     public List<CozinhaDto> findAll() {
-        return repository.findAll().stream().map(CozinhaDto::new).toList();
+       return assembler.toCollectionModel(repository.findAll());
     }
 
 
     @Transactional(readOnly = true)
     public CozinhaDto findById(Long id) {
         Cozinha Cozinha = getOrElseThrow(id);
-
-        return new CozinhaDto(Cozinha);
+        return assembler.toModel(Cozinha);
     }
 
     private Cozinha getOrElseThrow(Long id) {
@@ -39,14 +41,10 @@ public class CozinhaService {
 
     @Transactional
     public CozinhaDto insert(CozinhaDto dto) {
-        Cozinha cozinha = new Cozinha();
-        marge(cozinha, dto);
-        return new CozinhaDto(repository.save(cozinha));
+       var cozinha = assembler.toEntity(dto);
+        return assembler.toModel(repository.save(cozinha));
     }
 
-    private static void marge(Cozinha cozinha, CozinhaDto dto) {
-        cozinha.setNome(dto.getNome());
-    }
 
     @Transactional
     public void delete(Long id) {
@@ -63,8 +61,8 @@ public class CozinhaService {
     @Transactional
     public CozinhaDto update(Long id, CozinhaDto dto) {
         Cozinha cozinha = getOrElseThrow(id);
-        marge(cozinha, dto);
-        return new CozinhaDto(cozinha);
+        assembler.update(cozinha, dto);
+        return assembler.toModel(repository.save(cozinha));
 
     }
     

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +14,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsuarioMaxResponse {
+public class UsuarioMaxResponse  extends RepresentationModel<UsuarioMaxResponse> {
     private Long id;
     private String nome;
     private String email;
-    private List<GrupoUsuarioResponseDto> grupos = new ArrayList<>();
-
-    public UsuarioMaxResponse(Usuario usuario) {
-        this.id = usuario.getId();
-        this.nome = usuario.getNome();
-        this.email = usuario.getEmail();
-        this.getGrupos().addAll(usuario.getGrupos().stream().map(GrupoUsuarioResponseDto::new).toList());
-    }
+    private List<GrupoUsuarioResponseDto> grupos;
 }

@@ -5,6 +5,7 @@ import com.delivery.project.app.api.model.dto.usuarioDto.response.UsuarioMinResp
 import com.delivery.project.app.domain.model.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDate;
 
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class PedidoDto {
+public class PedidoDto extends RepresentationModel<PedidoDto> {
     private Long id;
     private Double subTotal;
     private Double taxaFrete;
@@ -24,14 +25,5 @@ public class PedidoDto {
     private UsuarioMinResponse cliente;
     private RestauranteMinDto restaurante;
 
-    public PedidoDto(Pedido x) {
-        this.id = x.getId();
-        this.subTotal = x.getSubTotal();
-        this.taxaFrete = x.getTaxaFrete();
-        this.valorTotal = x.getValorTotal();
-        this.dataCriacao = x.getDataCriacao();
-        this.status = x.getStatus();
-        this.cliente = new UsuarioMinResponse(x.getCliente());
-        this.restaurante = new RestauranteMinDto(x.getRestaurante());
-    }
+
 }

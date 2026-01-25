@@ -4,6 +4,7 @@ import com.delivery.project.app.api.model.dto.endereco.request.EnderecoRequestDt
 import com.delivery.project.app.api.model.dto.formaDePagamentoDto.request.FormaDePagamentoIdDto;
 import com.delivery.project.app.api.model.dto.itemPedidoDto.request.ItemPedidoRequestDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteIdDto;
+import com.delivery.project.app.api.model.dto.usuarioDto.request.UsuarioIdDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,8 @@ import java.util.List;
 @Getter
 @Setter
 public class PedidoRequestDto {
+        @NotNull
+        private UsuarioIdDto cliente;
         @NotNull
         private RestauranteIdDto restaurante;
         @NotNull

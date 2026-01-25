@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface FormaDePagamentoRepository extends JpaRepository<FormaDePagamento, Long> {
 
     @Query(value = "SELECT obj FROM FormaDePagamento obj WHERE obj.id IN :formasDePagamento")
-    List<Optional<FormaDePagamento>> getByIds(List<Long> formasDePagamento);
+    List<Optional<FormaDePagamento>> getByIds(Set<Long> formasDePagamento);
 }

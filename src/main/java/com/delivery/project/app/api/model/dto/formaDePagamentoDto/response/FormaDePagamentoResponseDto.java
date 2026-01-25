@@ -1,15 +1,16 @@
 package com.delivery.project.app.api.model.dto.formaDePagamentoDto.response;
 
 import com.delivery.project.app.domain.model.FormaDePagamento;
-import lombok.Data;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
-@Data
-public class FormaDePagamentoResponseDto {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class FormaDePagamentoResponseDto extends RepresentationModel<FormaDePagamentoResponseDto> {
     private Long id;
     private String descricao;
 
-    public FormaDePagamentoResponseDto(FormaDePagamento x) {
-        this.id = x.getId();
-        this.descricao = x.getDescricao();
-    }
 }

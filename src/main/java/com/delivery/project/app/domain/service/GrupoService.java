@@ -1,7 +1,10 @@
 package com.delivery.project.app.domain.service;
 
+import com.delivery.project.app.api.assembler.GrupoAssembler;
+import com.delivery.project.app.api.assembler.PermissaoAssembler;
 import com.delivery.project.app.api.model.dto.grupoDto.request.GrupoRequestDto;
 import com.delivery.project.app.api.model.dto.grupoDto.response.GrupoResponseDto;
+import com.delivery.project.app.api.model.dto.permissaoDto.PermissaoDto;
 import com.delivery.project.app.domain.model.Grupo;
 import com.delivery.project.app.domain.model.Permissao;
 import com.delivery.project.app.domain.exceptions.AssociacaoException;
@@ -26,17 +29,20 @@ public class GrupoService {
         private GrupoRepository repository;
         @Autowired
         private PermissaoRepository permissaoRepository;
+        @Autowired
+        private GrupoAssembler assembler;
+        @Autowired
+        private PermissaoAssembler permissaoAssembler;
 
         @Transactional(readOnly = true)
         public List<GrupoResponseDto> getAll() {
             List<Grupo>  grupos = repository.findAll();
-            return grupos.stream().map(GrupoResponseDto::new).toList();
+            return assembler.toCollectionModel(grupos);
         }
 
         @Transactional(readOnly = true)
         public GrupoResponseDto getById(@PathVariable Long id) {
-            Grupo grupo = getOrElseThrow(id);
-            return new GrupoResponseDto(grupo);
+           return assembler.toModel(getOrElseThrow(id));
         }
 
         private Grupo getOrElseThrow(Long id) {
@@ -45,20 +51,16 @@ public class GrupoService {
 
         @Transactional
         public GrupoResponseDto insert(GrupoRequestDto dto) {
-            Grupo grupo = new Grupo();
-            margeDtoToEntity(dto, grupo);
+           var grupo = assembler.toEntity(dto);
+           grupo = repository.save(grupo);
+           return assembler.toModel(grupo);
+        }
 
-            grupo = repository.save(grupo);
-            return new GrupoResponseDto(grupo);
-        }
-        private void margeDtoToEntity(GrupoRequestDto dto, Grupo grupo){
-            grupo.setNome(dto.nome());
-        }
         @Transactional
         public GrupoResponseDto update(GrupoRequestDto dto, Long id) {
-            Grupo grupo = getOrElseThrow(id);
-            margeDtoToEntity(dto, grupo);
-            return new GrupoResponseDto(grupo);
+            var grupo = getOrElseThrow(id);
+            assembler.update(grupo, dto);
+            return assembler.toModel(grupo);
         }
 
         @Transactional
@@ -73,8 +75,9 @@ public class GrupoService {
         }
 
         @Transactional(readOnly = true)
-    public List<Permissao>findAllPermissoes(Long id) {
-            return getOrElseThrow(id).getPermissoes();
+    public List<PermissaoDto>findAllPermissoes(Long id) {
+            var grupo = getOrElseThrow(id);
+            return permissaoAssembler.toCollectionModel(grupo.getPermissoes());
     }
 
     @Transactional(readOnly = true)
@@ -82,7 +85,7 @@ public class GrupoService {
             Grupo grupo = getOrElseThrow(grupoId);
             Permissao permissao = getPermissaoOrElseThrow(permissaoId);
             verificarPermissao(grupo, permissao);
-        return permissao;
+        return permissaoAssembler.toModel(permissao);
     }
 
     private void verificarPermissao(Grupo grupo, Permissao permissao) {

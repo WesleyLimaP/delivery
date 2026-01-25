@@ -12,6 +12,8 @@ import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,7 +22,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class PedidoMaxDto {
+@Setter
+public class PedidoMaxDto extends RepresentationModel<PedidoMaxDto> {
     private Long id;
     private Double subTotal;
     private Double taxaFrete;
@@ -37,20 +40,4 @@ public class PedidoMaxDto {
     private FormaDePagamentoResponseDto formaDePagamento;
     private  final List<ItemPedidoResponseDto> itens = new ArrayList<>();
 
-    public PedidoMaxDto(Pedido x) {
-        this.id = x.getId();
-        this.subTotal = x.getSubTotal();
-        this.taxaFrete = x.getTaxaFrete();
-        this.valorTotal = x.getValorTotal();
-        this.dataCriacao = x.getDataCriacao();
-        this.dataConfirmacao = x.getDataConfirmacao();
-        this.dataCancelamento =  x.getDataCancelamento();
-        this.dataEntrega = x.getDataEntrega();
-        this.status = x.getStatus();
-        this.cliente = new UsuarioMinResponse(x.getCliente());
-        this.restaurante = new RestauranteMinDto(x.getRestaurante());
-        this.endereco = new EnderecoDto(x.getEndereco());
-        this.formaDePagamento = new FormaDePagamentoResponseDto(x.getFormaDePagamento());
-        this.itens.addAll(x.getItens().stream().map(ItemPedidoResponseDto::new).toList());
-    }
 }

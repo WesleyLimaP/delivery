@@ -2,6 +2,7 @@ package com.delivery.project.app.api.model.dto.endereco.estadoDto;
 
 import com.delivery.project.app.domain.model.Estado;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;

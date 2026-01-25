@@ -1,30 +1,28 @@
 package com.delivery.project.app.api.model.dto.restauranteDto.request;
 
-import com.delivery.project.app.domain.model.Endereco;
+import com.delivery.project.app.api.model.dto.endereco.request.EnderecoRequestDto;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
-@Data
-public class RestauranteDtoInsert {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class RestauranteInsertDto {
     @NotBlank
     private String nome;
-    @NotNull
-    private boolean aberto;
     @NotNull
     @DecimalMin("0")
     private Double taxaFrete;
     @NotNull
     private Long cozinhaId;
-    @Setter(AccessLevel.NONE)
     @NotNull
-    private List<Long> formasDePagamento;
+    private Set<Long> formasDePagamento;
     @NotNull
-    private Endereco endereco;
+    private EnderecoRequestDto endereco;
 
 }

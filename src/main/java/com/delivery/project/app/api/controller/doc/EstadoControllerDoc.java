@@ -1,6 +1,7 @@
 package com.delivery.project.app.api.controller.doc;
 
 import com.delivery.project.app.api.model.dto.endereco.estadoDto.EstadoDto;
+import com.delivery.project.app.api.model.dto.endereco.estadoDto.request.EstadoNomeDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -39,7 +40,7 @@ public interface EstadoControllerDoc {
         @ApiResponse(responseCode = "404", description = "Estado não encontrado"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    ResponseEntity<EstadoDto> update(@PathVariable Long id, @RequestBody EstadoDto dto);
+    ResponseEntity<EstadoDto> update(@PathVariable Long id, @RequestBody EstadoNomeDto dto);
 
     @Operation(summary = "Remove um estado")
     @ApiResponses(value = {

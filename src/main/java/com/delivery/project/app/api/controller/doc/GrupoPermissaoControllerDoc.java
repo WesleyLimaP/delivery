@@ -1,6 +1,6 @@
 package com.delivery.project.app.api.controller.doc;
 
-import com.delivery.project.app.domain.model.Permissao;
+import com.delivery.project.app.api.model.dto.permissaoDto.PermissaoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,7 +18,7 @@ public interface GrupoPermissaoControllerDoc {
         @ApiResponse(responseCode = "200", description = "Lista de permissões retornada com sucesso"),
         @ApiResponse(responseCode = "404", description = "Grupo não encontrado")
     })
-    ResponseEntity<List<Permissao>> findAllPermissoes(@PathVariable Long grupoId);
+    ResponseEntity<List<PermissaoDto>> findAllPermissoes(@PathVariable Long grupoId);
 
     @Operation(summary = "Associa uma permissão a um grupo")
     @ApiResponses(value = {

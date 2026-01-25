@@ -1,7 +1,7 @@
 package com.delivery.project.app.api.controller;
 
 import com.delivery.project.app.api.controller.doc.GrupoPermissaoControllerDoc;
-import com.delivery.project.app.domain.model.Permissao;
+import com.delivery.project.app.api.model.dto.permissaoDto.PermissaoDto;
 import com.delivery.project.app.domain.service.GrupoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class GrupoPermissaoController  implements GrupoPermissaoControllerDoc {
 
 
     @GetMapping(value = "/{grupoId}/permissoes")
-    public ResponseEntity<List<Permissao>> findAllPermissoes(@PathVariable Long grupoId){
+    public ResponseEntity<List<PermissaoDto>> findAllPermissoes(@PathVariable Long grupoId){
         return ResponseEntity.ok().body(service.findAllPermissoes(grupoId));
     }
     @GetMapping(value = "/{grupoId}/permissoes/{permissaoId}")

@@ -1,20 +1,19 @@
 package com.delivery.project.app.domain.service;
-import com.delivery.project.app.api.model.dto.produtoDto.request.ProdutoRequestDto;
-import com.delivery.project.app.api.model.dto.produtoDto.response.ProdutoResponseDto;
+import com.delivery.project.app.api.assembler.RestauranteAssembler;
+import com.delivery.project.app.api.assembler.RestauranteDtoSingleSearchAssembler;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteAbertoDto;
+import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteInsertDto;
+import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteUpdateDto;
 import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
+import com.delivery.project.app.domain.exceptions.FormaDePagamentoEncontradaException;
+import com.delivery.project.app.domain.exceptions.RestauranteNaoEncontradoException;
 import com.delivery.project.app.domain.model.Cozinha;
 import com.delivery.project.app.domain.model.FormaDePagamento;
-import com.delivery.project.app.domain.model.Produto;
 import com.delivery.project.app.domain.model.Restaurante;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
-import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteDtoInsert;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDtoSingleSearch;
-import com.delivery.project.app.domain.service.util.FindOrFailService;
-import com.delivery.project.app.domain.service.util.mapper.produto.ProdutoMapper;
-import com.delivery.project.app.domain.service.util.mapper.restaurante.RestauranteMapper;
-import com.delivery.project.app.domain.service.util.AssossiationValidatorService;
-import com.delivery.project.app.domain.repository.ProdutoRepository;
+import com.delivery.project.app.domain.repository.CozinhaRepository;
+import com.delivery.project.app.domain.repository.FormaDePagamentoRepository;
 import com.delivery.project.app.domain.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,42 +21,43 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RestauranteService {
+    public static final String MSG_COZINHA_NAO_ENCONTRADA = "cozinha nao encontrada";
+    private static final String MSG_RESTAURANTE_NAO_ENCONTRADO = "Restaurante nao encontrado";
+    private static final String MSG_FORMA_DE_PAGAMENTO_NAO_ENCONTRADA = "forma de pagamento nao encontrada";
+    private static final String MSG_INTEGRIDADE_REFERENCIAL = "Não foi possivel deletar pois o restaurante está em uso";
     @Autowired
     private RestauranteRepository restauranteRepository;
     @Autowired
-    private ProdutoMapper produtoMapper;
+    private RestauranteAssembler restauranteAssembler;
     @Autowired
-    private ProdutoRepository produtoRepository;
+    private RestauranteDtoSingleSearchAssembler restauranteDtoSingleSearch;
     @Autowired
-    private AssossiationValidatorService assossiationValidatorService;
+    FormaDePagamentoRepository formaDePagamentoRepository;
     @Autowired
-    private RestauranteMapper restauranteMapper;
-    @Autowired
-    private FindOrFailService findOrFailService;
+    CozinhaRepository cozinhaRepository;
 
 
     @Transactional(readOnly = true)
     public List<RestauranteDto> findAll() {
-        return restauranteRepository.getAll().stream().map(RestauranteDto::new).toList();
+        return restauranteAssembler.toCollectionModel(restauranteRepository.getAll());
     }
 
 
     @Transactional(readOnly = true)
     public RestauranteDtoSingleSearch findById(Long id) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(id);
-
-        return new RestauranteDtoSingleSearch(restaurante);
+        Restaurante restaurante = getRestauranteOrElseThrow(id);
+        return restauranteDtoSingleSearch.toModel(restaurante);
     }
 
     @Transactional
-    public RestauranteDto insert(RestauranteDtoInsert dto) {
-        Cozinha cozinha = findOrFailService.getCozinhaOrElseThrow(dto);
-        List<FormaDePagamento> formaDePagamentosObj = findOrFailService.getFormaDePagamentosObj(dto);
-        Restaurante restaurante = new Restaurante();
-        restauranteMapper.toEntity(restaurante, dto, cozinha, formaDePagamentosObj);
+    public RestauranteDto insert(RestauranteInsertDto dto) {
+        Cozinha cozinha = getCozinhaOrElseThrow(dto);
+        List<FormaDePagamento> formaDePagamentosObj = getFormaDePagamentosObj(dto);
+        var restaurante = restauranteAssembler.toEntity(dto);
         return new RestauranteDto( restauranteRepository.save(restaurante));
     }
 
@@ -66,102 +66,78 @@ public class RestauranteService {
     @Transactional
     public void delete(Long id) {
         try {
-            restauranteRepository.deleteById(findOrFailService.getRestauranteOrElseThrow(id).getId());
+            restauranteRepository.deleteById(getRestauranteOrElseThrow(id).getId());
             restauranteRepository.flush();
         }
         catch (DataIntegrityViolationException e){
-            throw new EntidadeEmUsoException("Não foi possivel deletar pois o restaurante está em uso");
+            throw new EntidadeEmUsoException(MSG_INTEGRIDADE_REFERENCIAL);
         }
 
     }
 
     @Transactional
-    public RestauranteDto update(Long id, RestauranteDtoInsert dto) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(id);
-
-        Cozinha cozinha = findOrFailService.getCozinhaOrElseThrow(dto);
-
-        List<FormaDePagamento> formaDePagamentosObj = findOrFailService.getFormaDePagamentosObj(dto);
-
-        restauranteMapper.toEntity(restaurante, dto, cozinha, formaDePagamentosObj);
-        return new RestauranteDto(restaurante);
+    public RestauranteDto update(Long id, RestauranteUpdateDto dto) {
+        Restaurante restaurante = getRestauranteOrElseThrow(id);
+        restauranteAssembler.update(restaurante, dto);
+        restaurante = restauranteRepository.save(restaurante);
+        return restauranteAssembler.toModel(restaurante);
 
     }
 
 
     @Transactional
     public void desassociarFormaPagamento(Long restId, Long formaPagamanetoId) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(restId);
-        FormaDePagamento formaDePagamento = findOrFailService.getFormaPagamentoOrElseThrow(formaPagamanetoId);
-        assossiationValidatorService.verificarAssociacaoFormaPagamento(restaurante, formaDePagamento);
+        Restaurante restaurante = getRestauranteOrElseThrow(restId);
+        FormaDePagamento formaDePagamento = getFormaPagamentoOrElseThrow(formaPagamanetoId);
+
+        restaurante.verificarAssociacaoFormaPagamento(formaDePagamento);
         restaurante.getFormasPagamento().remove(formaDePagamento);
 
     }
 
     @Transactional
     public void associarFormaPagamento(Long restId, Long formaPagamanetoId) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(restId);
-        FormaDePagamento formaDePagamento = findOrFailService.getFormaPagamentoOrElseThrow(formaPagamanetoId);
-        FormaDePagamento novaFormaPagamentoObj = findOrFailService.getFormaPagamentoOrElseThrow(formaPagamanetoId);
+        Restaurante restaurante = getRestauranteOrElseThrow(restId);
+        FormaDePagamento novaFormaPagamentoObj = getFormaPagamentoOrElseThrow(formaPagamanetoId);
         restaurante.getFormasPagamento().add(novaFormaPagamentoObj);
 
 
     }
 
-    @Transactional(readOnly = true)
-    public ProdutoResponseDto findProdutoById(Long restId, Long prodId) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(restId);
-        Produto produtoRepo = findOrFailService.getProdutoOrElseThrow(prodId);
-        assossiationValidatorService.verificarProdutoAssociado(restaurante, produtoRepo);
-        return new ProdutoResponseDto(produtoRepo);
-    }
-
-
-
-    @Transactional(readOnly = true)
-    public List<ProdutoResponseDto> findAllProdutoById(Long restId) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(restId);
-        return restaurante.getProdutos().stream().map(ProdutoResponseDto::new).toList();
-    }
-
-    @Transactional
-    public ProdutoResponseDto insertProduto(Long restId, ProdutoRequestDto produtoDto) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(restId);
-        Produto produto = produtoMapper.toEntity(produtoDto, restaurante);
-        produto = produtoRepository.save(produto);
-        restaurante.getProdutos().add(produto);
-        return new ProdutoResponseDto(produto);
-
-    }
-    @Transactional
-    public ProdutoResponseDto updateProduto(Long restId, Long prodId, ProdutoRequestDto produtoDto) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(restId);
-        Produto produto = findOrFailService.getProdutoOrElseThrow(prodId);
-        assossiationValidatorService.verificarProdutoAssociado(restaurante, produto);
-        produtoMapper.toEntity(produtoDto, produto);
-        return new ProdutoResponseDto(produto);
-
-    }
-
-
-    @Transactional
-    public void deleteProduto(Long restId, Long prodId) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(restId);
-        Produto produto = findOrFailService.getProdutoOrElseThrow(prodId);
-        assossiationValidatorService.verificarProdutoAssociado(restaurante, produto);
-        restaurante.getProdutos().remove(produto);
-        produtoRepository.delete(produto);
-    }
     @Transactional
     public RestauranteAbertoDto abertura(Long id) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(id);
+        Restaurante restaurante = getRestauranteOrElseThrow(id);
         restaurante.setAberto(true);
         return new RestauranteAbertoDto(restaurante.isAberto());
     }
     @Transactional
     public RestauranteAbertoDto fechamento(Long id) {
-        Restaurante restaurante = findOrFailService.getRestauranteOrElseThrow(id);
+        Restaurante restaurante = getRestauranteOrElseThrow(id);
         restaurante.setAberto(false);
         return new RestauranteAbertoDto(restaurante.isAberto());
     }
+    public Restaurante getRestauranteOrElseThrow(Long id) {
+        return restauranteRepository.getId(id).orElseThrow(() ->
+                new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO));
+    }
+
+    public List<FormaDePagamento> getFormaDePagamentosObj(RestauranteInsertDto dto) {
+        List<Optional<FormaDePagamento>> formaDePagamentoList =
+                formaDePagamentoRepository.getByIds(dto.getFormasDePagamento());
+
+        return formaDePagamentoList.stream().map(
+                x -> x.orElseThrow(() -> new RestauranteNaoEncontradoException(
+                        MSG_FORMA_DE_PAGAMENTO_NAO_ENCONTRADA
+                ))).toList();
+    }
+    public FormaDePagamento getFormaPagamentoOrElseThrow(Long formaPagamentoId) {
+        return formaDePagamentoRepository.findById(formaPagamentoId).orElseThrow(() ->
+                new FormaDePagamentoEncontradaException(MSG_FORMA_DE_PAGAMENTO_NAO_ENCONTRADA));
+    }
+    public Cozinha getCozinhaOrElseThrow(RestauranteInsertDto dto) {
+        return cozinhaRepository.findById(dto.getCozinhaId()).orElseThrow(() ->
+                new RestauranteNaoEncontradoException(MSG_COZINHA_NAO_ENCONTRADA));
+    }
+
+
 }

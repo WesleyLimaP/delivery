@@ -35,7 +35,7 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioMaxResponse> insert (@RequestBody @Valid UsuarioPostRequestDto dto){
+    public ResponseEntity<UsuarioMaxResponse> insert (@Valid @RequestBody UsuarioPostRequestDto dto){
         UsuarioMaxResponse dtoResponse = service.insert(dto);
         URI location = LocationBulder.create(dtoResponse.getId());
         return ResponseEntity.created(location).body(dtoResponse);

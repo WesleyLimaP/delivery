@@ -1,5 +1,6 @@
 package com.delivery.project.app.domain.model;
 
+import com.delivery.project.app.domain.exceptions.AssociacaoException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,17 +32,30 @@ public class Restaurante {
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
     )
-    private final Set<FormaDePagamento> formasPagamento = new HashSet<>();
+    private Set<FormaDePagamento> formasPagamento = new HashSet<>();
     @Embedded
     private Endereco endereco;
     @OneToMany(mappedBy = "restaurante")
-    private final List<Produto> produtos = new ArrayList<>();
+    private List<Produto> produtos = new ArrayList<>();
     @ManyToMany
     @JoinTable(
             name = "tb_usuario_restaurante",
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "usuario_id")
     )
-    private final Set<Usuario> usuarios = new HashSet<>();
+    private Set<Usuario> usuarios = new HashSet<>();
 
+    public boolean verificarProdutoAssociado(Produto produtoRepo) {
+        return this.getProdutos().contains(produtoRepo);
+    }
+
+    public boolean verificarProdutoAssociado(List<Produto> produtoRepo) {
+        return new HashSet<>(this.getProdutos()).containsAll(produtoRepo);
+
+    }
+
+    public boolean verificarAssociacaoFormaPagamento(FormaDePagamento formaDePagamento) {
+        return this.getFormasPagamento().contains(formaDePagamento);
+    }
 }
+

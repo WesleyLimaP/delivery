@@ -1,5 +1,6 @@
 package com.delivery.project.app.domain.service;
 
+import com.delivery.project.app.api.assembler.FormaDePagamentoAssembler;
 import com.delivery.project.app.api.model.dto.formaDePagamentoDto.request.FormaDePagamentoDescricaoDto;
 import com.delivery.project.app.api.model.dto.formaDePagamentoDto.response.FormaDePagamentoResponseDto;
 import com.delivery.project.app.domain.model.FormaDePagamento;
@@ -20,17 +21,19 @@ public class FormaDePagamentoService {
     public static final String INTEGRIDADE_REFERENCIAL_MSG = "A entidade nao pode ser apagada pois existe dependencia com outras classes";
     @Autowired
     private FormaDePagamentoRepository repository;
+    @Autowired
+    private FormaDePagamentoAssembler assembler;
 
     @Transactional(readOnly = true)
     public List<FormaDePagamentoResponseDto> getAll() {
-        List<FormaDePagamento>  formaDePagamentos = repository.findAll();
-        return formaDePagamentos.stream().map(FormaDePagamentoResponseDto::new).toList();
+        var formasDePagamento = repository.findAll();
+        return assembler.toCollectionModel(formasDePagamento);
     }
 
     @Transactional(readOnly = true)
     public FormaDePagamentoResponseDto getById(@PathVariable Long id) {
         FormaDePagamento formaDePagamento = getOrElseThrow(id);
-        return new FormaDePagamentoResponseDto(formaDePagamento);
+        return assembler.toModel(formaDePagamento);
     }
 
     private FormaDePagamento getOrElseThrow(Long id) {
@@ -39,20 +42,16 @@ public class FormaDePagamentoService {
 
     @Transactional
     public FormaDePagamentoResponseDto insert(FormaDePagamentoDescricaoDto dto) {
-        FormaDePagamento formaDePagamento = new FormaDePagamento();
-        margeDtoToEntity(dto, formaDePagamento);
-
+        var formaDePagamento = assembler.toEntity(dto);
         formaDePagamento = repository.save(formaDePagamento);
-        return new FormaDePagamentoResponseDto(formaDePagamento);
+        return assembler.toModel(formaDePagamento);
     }
-    private void margeDtoToEntity(FormaDePagamentoDescricaoDto dto, FormaDePagamento formaDePagamento){
-        formaDePagamento.setDescricao(dto.descricao());
-    }
+
     @Transactional
     public FormaDePagamentoResponseDto update(FormaDePagamentoDescricaoDto dto, Long id) {
         FormaDePagamento formaDePagamento = getOrElseThrow(id);
-        margeDtoToEntity(dto, formaDePagamento);
-        return new FormaDePagamentoResponseDto(formaDePagamento);
+        assembler.update(formaDePagamento, dto);
+        return assembler.toModel(formaDePagamento);
     }
 
     @Transactional

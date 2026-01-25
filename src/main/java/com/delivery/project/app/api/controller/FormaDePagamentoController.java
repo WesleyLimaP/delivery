@@ -10,21 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
 
 @RestController()
-@RequestMapping(value = "/formas-de-pagamento")
-public class FormaDePagaemntoController implements FormaDePagamentoControllerDoc {
+@RequestMapping("/formas-de-pagamento")
+public class FormaDePagamentoController implements FormaDePagamentoControllerDoc {
     @Autowired
     private FormaDePagamentoService service;
 
     @GetMapping
     public ResponseEntity<List<FormaDePagamentoResponseDto>> findAll(){
-        List<FormaDePagamentoResponseDto> formasDePagamento = service.getAll();
-        return ResponseEntity.ok(formasDePagamento);
+        return ResponseEntity.ok(service.getAll());
     }
     @GetMapping(value = "/{id}")
     public ResponseEntity<FormaDePagamentoResponseDto> findById(@PathVariable Long id){

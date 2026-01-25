@@ -35,7 +35,7 @@ public class GrupoController implements GrupoControllerDoc {
         @PostMapping()
         public ResponseEntity<GrupoResponseDto> insert(@RequestBody @Valid GrupoRequestDto dto){
             GrupoResponseDto dtoResponse = service.insert(dto);
-            URI location = LocationBulder.create(dtoResponse.id());
+            URI location = LocationBulder.create(dtoResponse);
             return ResponseEntity.created(location).body(dtoResponse);
         }
 

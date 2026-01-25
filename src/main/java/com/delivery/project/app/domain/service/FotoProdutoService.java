@@ -1,5 +1,6 @@
 package com.delivery.project.app.domain.service;
 
+import com.delivery.project.app.api.assembler.FotoProdutoAssembler;
 import com.delivery.project.app.api.model.dto.filesDto.ImageDto;
 import com.delivery.project.app.api.model.dto.fotoProduto.FotoProdutoDto;
 import com.delivery.project.app.domain.repository.ProdutoRepository;
@@ -18,9 +19,9 @@ public class FotoProdutoService {
     @Autowired
     private RestauranteService restauranteService;
     @Autowired
-    private FotoProdutoMapper mapper;
-    @Autowired
     private FotoStorageService storageService;
+    @Autowired
+    private FotoProdutoAssembler assembler;
 
     @Transactional
     public FotoProdutoDto insert(Long restauranteId, Long produtoId, ImageDto imageDto){
@@ -29,7 +30,7 @@ public class FotoProdutoService {
         fotoProduto.ifPresent(foto -> repository.delete(foto));
         fotoProduto.ifPresent(foto -> storageService.deletar(foto.getNomeArquivo()));
 
-        var produtoEntity = mapper.dtoToFotoProduto(produtoId, imageDto);
+        var produtoEntity = assembler.toEntity(imageDto);
 
         FotoProdutoDto dto = new FotoProdutoDto(repository.save(produtoEntity));
 
@@ -45,7 +46,7 @@ public class FotoProdutoService {
         repository.findById(produtoId);
         var object = repository.findFotoProduto(produtoId, restauranteId).orElseThrow(() ->
                 new FotoNaoEncontradaException("foto nao encotrada"));
-        return new FotoProdutoDto (object);
+        return assembler.toModel(object);
     }
 
     @Transactional(readOnly = true)
@@ -59,62 +60,6 @@ public class FotoProdutoService {
                 new FotoNaoEncontradaException("foto nao encotrada"));
         repository.delete(object);
         storageService.deletar(object.getNomeArquivo()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         );
     }
 }

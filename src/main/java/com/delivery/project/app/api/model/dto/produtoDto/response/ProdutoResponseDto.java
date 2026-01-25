@@ -4,11 +4,12 @@ import com.delivery.project.app.domain.model.Produto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProdutoResponseDto {
+public class ProdutoResponseDto extends RepresentationModel<ProdutoResponseDto> {
     private Long id;
     private String nome;
     private String descricao;

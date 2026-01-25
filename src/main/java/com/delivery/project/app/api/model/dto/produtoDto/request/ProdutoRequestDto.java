@@ -7,11 +7,12 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProdutoRequestDto {
+public class ProdutoRequestDto extends RepresentationModel<ProdutoRequestDto> {
     @NotBlank
     private String nome;
     @NotBlank

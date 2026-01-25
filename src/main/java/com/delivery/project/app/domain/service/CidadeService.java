@@ -1,5 +1,8 @@
 package com.delivery.project.app.domain.service;
 
+import com.delivery.project.app.api.assembler.CidadeAssembler;
+import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeRequestDto;
+import com.delivery.project.app.api.model.dto.endereco.estadoDto.EstadoDto;
 import com.delivery.project.app.domain.model.Estado;
 import com.delivery.project.app.api.model.dto.endereco.cidadeDto.response.CidadeDto;
 import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeUpdateDto;
@@ -23,42 +26,43 @@ public class CidadeService {
     @Autowired
     private CidadeRepository repository;
     @Autowired
+    private CidadeAssembler assembler;
+    @Autowired
     private EstadoRepository estadorepository;
 
     @Transactional(readOnly = true)
     public List<CidadeDto> findAll()
     {
         List<Cidade> cidade =  repository.findAll();
-        return cidade.stream().map(CidadeDto::new).toList();
+        return assembler.toCollectionModel(cidade);
     }
 
     @Transactional(readOnly = true)
     public CidadeDto findById(Long id){
        Cidade cidade = findByIdOrElseThrow(id);
 
-       return new CidadeDto(cidade);
+       return assembler.toModel(cidade);
     }
 
     @Transactional
     public void delete(Long id){
         try {
-            repository.deleteById(id);
-        }catch (DataIntegrityViolationException e){
+            var cidade = findByIdOrElseThrow(id);
+            repository.delete(cidade);
+            repository.flush();
+        }catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(MSG_INTEGRIDADE_REFERENCIAL);
-        }catch (EntityNotFoundException e){
-        throw new CidadeNaoEncontradaException(ID_NAO_ENCONTRADO);
         }
     }
 
 
 
     @Transactional
-    public CidadeDto insert(CidadeDto dto){
-        Estado estado = estadorepository.findById(dto.getEstadoDto().getId()).orElseThrow(() ->
+    public CidadeDto insert(CidadeRequestDto dto){
+        var estado = estadorepository.findById(dto.getEstado().getId()).orElseThrow(() ->
                 new CidadeNaoEncontradaException(ID_NAO_ENCONTRADO));
-      Cidade cidade = new Cidade(dto.getNome(), estado );
-      dto = new CidadeDto(repository.save(cidade));
-      return dto;
+      Cidade cidade = assembler.toEntity(dto);
+     return assembler.toModel(repository.save(cidade));
 
     }
 
@@ -66,8 +70,8 @@ public class CidadeService {
     public CidadeDto update(Long id, CidadeUpdateDto dto){
         Cidade cidade = findByIdOrElseThrow(id);
         cidade.setNome(dto.nome());
-
-        return new CidadeDto(cidade);
+        assembler.update(cidade, dto);
+        return assembler.toModel(cidade);
 
     }
 
@@ -75,8 +79,5 @@ public class CidadeService {
         return repository.findById(id).orElseThrow(() ->
                 new CidadeNaoEncontradaException(ID_NAO_ENCONTRADO));
     }
-
-
-
 
 }

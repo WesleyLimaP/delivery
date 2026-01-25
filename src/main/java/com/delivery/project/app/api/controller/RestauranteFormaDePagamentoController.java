@@ -17,7 +17,7 @@ public class RestauranteFormaDePagamentoController implements RestauranteFormaDe
 
     @GetMapping
     public ResponseEntity<List<FormaDePagamentoResponseDto>> findById(@PathVariable Long restauranteId){
-        return ResponseEntity.ok().body(service.findById(restauranteId).getFormasDePagamento());
+        return ResponseEntity.ok().body(service.findById(restauranteId).getFormasPagamento());
     }
 
     @DeleteMapping("/{formaDePagamentoId}")
@@ -28,7 +28,7 @@ public class RestauranteFormaDePagamentoController implements RestauranteFormaDe
     @PutMapping("/{formaPagamentoId}")
     public ResponseEntity<List<FormaDePagamentoResponseDto>> associar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId){
         service.associarFormaPagamento(restauranteId, formaPagamentoId);
-        return ResponseEntity.ok(service.findById(restauranteId).getFormasDePagamento());
+        return ResponseEntity.ok(service.findById(restauranteId).getFormasPagamento());
 
     }
 

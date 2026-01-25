@@ -4,13 +4,13 @@ import com.delivery.project.app.api.controller.doc.RestauranteControllerDoc;
 import com.delivery.project.app.api.model.dto.produtoDto.request.ProdutoRequestDto;
 import com.delivery.project.app.api.model.dto.produtoDto.response.ProdutoResponseDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteAbertoDto;
+import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteInsertDto;
+import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteUpdateDto;
 import com.delivery.project.app.api.util.LocationBulder;
+import com.delivery.project.app.domain.service.RestauranteProdutoService;
 import com.delivery.project.app.domain.service.RestauranteService;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
-import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteDtoInsert;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDtoSingleSearch;
-import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
-import com.delivery.project.app.domain.exceptions.EntidadeNaoEncontradaException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
@@ -45,55 +45,19 @@ public class RestauranteController implements RestauranteControllerDoc {
     }
 
     @PostMapping
-    public ResponseEntity<RestauranteDto> insert (@RequestBody @Valid RestauranteDtoInsert dto){
+    public ResponseEntity<RestauranteDto> insert (@RequestBody @Valid RestauranteInsertDto dto){
         URI location = LocationBulder.create(service.insert(dto).getId());
         return ResponseEntity.created(location).body(service.insert(dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete (@PathVariable Long id){
-        try {
+    public ResponseEntity<Void> delete (@PathVariable Long id){
             service.delete(id);
             return status(HttpStatus.NO_CONTENT).build();
-        } catch (EntidadeEmUsoException e) {
-            return status(HttpStatus.CONFLICT).body(e.getMessage());
-        }catch (EntidadeNaoEncontradaException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<RestauranteDto> update(@PathVariable Long id, @RequestBody @Valid RestauranteDtoInsert dto){
+    public ResponseEntity<RestauranteDto> update(@PathVariable Long id, @RequestBody @Valid RestauranteUpdateDto dto){
         return ResponseEntity.ok(service.update(id, dto ));
-    }
-
-    //SUB RECURSOS DE RESTAURANTE
-
-    @GetMapping(value = "/{restId}/produtos/{prodId}")
-    public ResponseEntity<ProdutoResponseDto> findProdutoById(@PathVariable Long restId, @PathVariable Long prodId){
-        return ResponseEntity.ok().body(service.findProdutoById(restId, prodId));
-    }
-    @GetMapping(value = "/{restId}/produtos")
-    public ResponseEntity<List<ProdutoResponseDto>> findAllProduto(@PathVariable Long restId){
-        return ResponseEntity.ok().body(service.findAllProdutoById(restId));
-    }
-    @PostMapping(value = "/{restId}/produtos")
-    public ResponseEntity<ProdutoResponseDto> insertProduto(@PathVariable Long restId, @Valid @RequestBody ProdutoRequestDto dto){
-        ProdutoResponseDto dtoResult = service.insertProduto(restId, dto);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .buildAndExpand(dtoResult.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).body(dtoResult);
-    }
-    @PutMapping(value = "/{restId}/produtos/{prodId}")
-    public ResponseEntity<ProdutoResponseDto> updateProduto(@PathVariable Long restId, @PathVariable Long prodId, @Valid @RequestBody ProdutoRequestDto dto){
-        return ResponseEntity.ok().body(service.updateProduto(restId, prodId, dto));
-    }
-    @DeleteMapping(value = "/{restId}/produtos/{prodId}")
-    public ResponseEntity<Void> deleteProduto(@PathVariable Long restId, @PathVariable Long prodId){
-        service.deleteProduto(restId, prodId);
-        return ResponseEntity.noContent().build();
     }
 
 

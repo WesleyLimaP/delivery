@@ -1,7 +1,9 @@
 package com.delivery.project.app.domain.service;
 
+import com.delivery.project.app.api.assembler.GrupoUsuarioAssembler;
+import com.delivery.project.app.api.assembler.RestauranteAssembler;
+import com.delivery.project.app.api.assembler.UsuarioMaxAssembler;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
-import com.delivery.project.app.api.model.dto.usuarioDto.request.GrupoUsuarioRequestDto;
 import com.delivery.project.app.api.model.dto.usuarioDto.request.UsuarioPostRequestDto;
 import com.delivery.project.app.api.model.dto.usuarioDto.request.UsuarioUpdateRequestDto;
 import com.delivery.project.app.api.model.dto.usuarioDto.request.UsuarioUpdateSenhaDto;
@@ -20,7 +22,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,11 +33,19 @@ public class UsuarioService {
     private GrupoRepository grupoRepository;
     @Autowired
     private RestauranteRepository restauranteRepository;
+    @Autowired
+    private UsuarioMaxAssembler usuarioMaxAssembler;
+    @Autowired
+    private UsuarioMinAssembler usuarioMinAssembler;
+    @Autowired
+    private GrupoUsuarioAssembler grupoUsuarioAssembler;
+    @Autowired
+    private RestauranteAssembler restauranteAssembler;
 
     @Transactional(readOnly = true)
     public List<UsuarioMinResponse> findAll() {
         List<Usuario> usuarios = repository.findAll();
-        return usuarios.stream().map(UsuarioMinResponse::new).toList();
+        return usuarioMinAssembler.toCollectionModel(usuarios);
     }
 
     @Transactional(readOnly = true)
@@ -44,50 +53,16 @@ public class UsuarioService {
         Usuario usuario = repository.findById(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException("usuario nao encontrado"));
 
-        return new UsuarioMaxResponse(usuario);
+        return usuarioMaxAssembler.toModel(usuario);
     }
 
     @Transactional()
     public UsuarioMaxResponse insert(UsuarioPostRequestDto dto) {
-        Usuario usuario = mergeDtoToEntity(dto);
+        Usuario usuario = usuarioMaxAssembler.toEntity(dto);
         verificarEmail(dto.getEmail(), usuario);
         usuario = repository.save(usuario);
-        return new UsuarioMaxResponse(usuario);
+        return usuarioMaxAssembler.toModel(usuario);
 
-    }
-
-    private void verificarEmail(String email, Usuario usuario) {
-        Optional<Usuario> emailResult = repository.findByEmail(email);
-        if(repository.findByEmail(email).isPresent() && !usuario.equals(emailResult.get())){
-           throw new EntidadeEmUsoException("o email fornecido ja existe");
-        }
-    }
-
-    private Usuario mergeDtoToEntity(UsuarioPostRequestDto dto) {
-        List<Grupo> grupos = getGrupos(dto);
-        Usuario usuario = new Usuario();
-        usuario.setNome(dto.getNome());
-        usuario.setSenha(dto.getSenha());
-        usuario.getGrupos().addAll(grupos);
-        usuario.setEmail(dto.getEmail());
-        return usuario;
-    }
-
-    private List<Grupo> getGrupos(UsuarioPostRequestDto dto) {
-        return new ArrayList<>(dto.getGrupos().stream()
-                .map(this::getGrupoOrElseThrow)
-                .toList());
-    }
-
-    private Grupo getGrupoOrElseThrow(GrupoUsuarioRequestDto x) {
-        return grupoRepository.findById(x.id())
-                .orElseThrow(() ->
-                        new GrupoNaoEncontradoException(" nao foi possivel encntrar o grupo com id informado"));
-    }
-    private Grupo getGrupoOrElseThrow(Long id) {
-        return grupoRepository.findById(id)
-                .orElseThrow(() ->
-                        new GrupoNaoEncontradoException(" nao foi possivel encntrar o grupo com id informado"));
     }
 
     @Transactional
@@ -101,87 +76,77 @@ public class UsuarioService {
         }
     }
 
-    private Usuario getOrElseThrow(Long id) {
-        return repository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("usuario nao econtrado"));
-    }
-    private Restaurante getRestauranteOrElseThrow(Long id) {
-        return restauranteRepository.findById(id).orElseThrow(() -> new RestauranteNaoEncontradoException("restaurante nao econtrado"));
-    }
 
     @Transactional
     public UsuarioMaxResponse update(Long id, UsuarioUpdateRequestDto dto) {
         Usuario usuario = getOrElseThrow(id);
         verificarEmail(dto.email(), usuario);
-        usuario.setNome(dto.nome());
-        usuario.setEmail(dto.email());
-        return new UsuarioMaxResponse(usuario);
+        usuarioMaxAssembler.update(usuario, dto);
+        return usuarioMaxAssembler.toModel(usuario);
     }
     @Transactional
     public UsuarioMaxResponse update(Long id, UsuarioUpdateSenhaDto dto) {
         Usuario usuario = getOrElseThrow(id);
         usuario.setSenha(dto.senha());
-        return new UsuarioMaxResponse(usuario);
+        repository.flush();
+        return usuarioMaxAssembler.toModel(usuario);
     }
 
     @Transactional(readOnly = true)
     public List<GrupoUsuarioResponseDto> findAllGrupos(Long usuarioId) {
         Usuario usuario = getOrElseThrow(usuarioId);
-        return usuario.getGrupos().stream().map(GrupoUsuarioResponseDto::new).toList();
+        return grupoUsuarioAssembler.toCollectionModel(usuario.getGrupos());
     }
 
     @Transactional(readOnly = true)
     public GrupoUsuarioResponseDto findGrupoById(Long usuarioId, Long grupoId) {
         Usuario usuario = getOrElseThrow(usuarioId);
         Grupo grupo = getGrupoOrElseThrow(grupoId);
-        verificarAssociacaoGrupo(usuario, grupo);
-        return new GrupoUsuarioResponseDto(grupo);
+        usuario.verificarAssociacaoGrupo(grupo);
+        throwExceptionIfNotGroupAssociated(usuario.verificarAssociacaoGrupo(grupo));
+        return grupoUsuarioAssembler.toModel(grupo);
 
     }
 
-    private void verificarAssociacaoGrupo(Usuario usuario, Grupo grupo) {
-        if(!usuario.getGrupos().contains(grupo)){throw new AssociacaoException("o usuario nao pertence a esse grupo");
-        }
-    }
-    private void verificarAssociacaoRestaurante(Usuario usuario, Restaurante restaurante) {
-        if(!usuario.getRestaurantes().contains(restaurante)){throw new AssociacaoException("o usuario nao pertence a esse restaurante");
-        }
-    }
+
 
     @Transactional
     public void desassociarGrupo(Long usuarioId, Long grupoId) {
         Usuario usuario = getOrElseThrow(usuarioId);
         Grupo grupo = getGrupoOrElseThrow(grupoId);
-        verificarAssociacaoGrupo(usuario, grupo);
+        var assossiacao = usuario.verificarAssociacaoGrupo(grupo);
+        throwExceptionIfNotGroupAssociated(assossiacao);
         usuario.getGrupos().remove(grupo);
     }
 
     @Transactional
-    public GrupoUsuarioResponseDto associarGrupo(Long usuarioId, Long grupoId) {
+    public void associarGrupo(Long usuarioId, Long grupoId) {
         Usuario usuario = getOrElseThrow(usuarioId);
         Grupo grupo = getGrupoOrElseThrow(grupoId);
         usuario.getGrupos().add(grupo);
-        return new GrupoUsuarioResponseDto(grupo);
     }
 
     @Transactional(readOnly = true)
     public RestauranteDto findRestauranteByid(Long usuarioId, Long restauranteId) {
         Restaurante restaurante = getRestauranteOrElseThrow(restauranteId);
         Usuario usuario = getOrElseThrow(usuarioId);
-        verificarAssociacaoRestaurante(usuario, restaurante);
-        return  new RestauranteDto(restaurante);
+        var assossiacao = usuario.verificarAssociacaoRestaurante(restaurante);
+        throwExceptionIfNotRestauranteAssociated(assossiacao);
+        return restauranteAssembler.toModel(restaurante);
 
     }
     @Transactional(readOnly = true)
-    public List<RestauranteDto> findAllRestaurante(Long usuarioId) {
+    public List<RestauranteDto> findAllRestaurante( Long usuarioId) {
         Usuario usuario = getOrElseThrow(usuarioId);
-        return  usuario.getRestaurantes().stream().map(RestauranteDto::new).toList();
+        return  restauranteAssembler.toCollectionModel(usuario.getRestaurantes().stream().toList());
 
     }
     @Transactional
     public void desassociarRestaurante(Long usuarioId, Long restauranteId) {
         Usuario usuario = getOrElseThrow(usuarioId);
         Restaurante restaurante = getRestauranteOrElseThrow(restauranteId);
-        verificarAssociacaoRestaurante(usuario, restaurante);
+        var associacao = usuario.verificarAssociacaoRestaurante(restaurante);
+        throwExceptionIfNotRestauranteAssociated(associacao);
         usuario.getRestaurantes().remove(restaurante);
     }
 
@@ -190,6 +155,33 @@ public class UsuarioService {
         Usuario usuario = getOrElseThrow(usuarioId);
         Restaurante restaurante = getRestauranteOrElseThrow(restauranteId);
         usuario.getRestaurantes().add(restaurante);
-        return new RestauranteDto(restaurante);
+        return restauranteAssembler.toModel(restaurante);
     }
+    private void verificarEmail(String email, Usuario usuario) {
+        Optional<Usuario> emailResult = repository.findByEmail(email);
+        if(repository.findByEmail(email).isPresent() && !usuario.equals(emailResult.get())){
+            throw new EntidadeEmUsoException("o email fornecido ja existe");
+        }
+    }
+
+    private Usuario getOrElseThrow(Long id) {
+        return repository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("usuario nao econtrado"));
+    }
+    private Restaurante getRestauranteOrElseThrow(Long id) {
+        return restauranteRepository.findById(id).orElseThrow(() -> new RestauranteNaoEncontradoException("restaurante nao econtrado"));
+    }
+    private Grupo getGrupoOrElseThrow(Long id) {
+        return grupoRepository.findById(id)
+                .orElseThrow(() ->
+                        new GrupoNaoEncontradoException(" nao foi possivel encntrar o grupo com id informado"));
+    }
+    private void throwExceptionIfNotGroupAssociated(boolean associacaoGrupo) {
+        if(!associacaoGrupo){throw new AssociacaoException("o usuario nao pertence a esse grupo");
+        }
+    }
+    private void throwExceptionIfNotRestauranteAssociated(boolean associacaoRestaurante) {
+        if(associacaoRestaurante){throw new AssociacaoException("o usuario nao pertence a esse restaurante");
+        }
+    }
+
 }

@@ -32,7 +32,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerDoc {
 
 
     @DeleteMapping("/{grupoId}")
-    public ResponseEntity<?> desassociar(@PathVariable Long usuarioId, @PathVariable Long grupoId){
+    public ResponseEntity<Void> desassociar(@PathVariable Long usuarioId, @PathVariable Long grupoId){
         service.desassociarGrupo(usuarioId, grupoId);
         return ResponseEntity.noContent().build();
     }

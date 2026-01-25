@@ -4,12 +4,15 @@ import com.delivery.project.app.domain.model.Cozinha;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CozinhaDto{
+public class CozinhaDto extends RepresentationModel<CozinhaDto>{
     private Long id;
     @NotBlank
     private String nome;
@@ -19,7 +22,4 @@ public class CozinhaDto{
         this.nome = cozinha.getNome();
     }
 
-    public CozinhaDto(Long id) {
-        this.id = id;
-    }
 }

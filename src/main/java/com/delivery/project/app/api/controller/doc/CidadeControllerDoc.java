@@ -1,5 +1,6 @@
 package com.delivery.project.app.api.controller.doc;
 
+import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeRequestDto;
 import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeUpdateDto;
 import com.delivery.project.app.api.model.dto.endereco.cidadeDto.response.CidadeDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ CidadeControllerDoc {
         @ApiResponse(responseCode = "201", description = "Cidade criada com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    ResponseEntity<CidadeDto> insert(@RequestBody CidadeDto dto);
+    ResponseEntity<CidadeDto> insert(@RequestBody CidadeRequestDto dto);
 
     @Operation(summary = "Atualiza uma cidade existente")
     @ApiResponses(value = {
