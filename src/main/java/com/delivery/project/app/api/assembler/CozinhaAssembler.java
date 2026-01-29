@@ -2,38 +2,51 @@ package com.delivery.project.app.api.assembler;
 
 import com.delivery.project.app.api.controller.CozinhaController;
 import com.delivery.project.app.api.model.dto.cozinhaDto.CozinhaDto;
-import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeRequestDto;
-import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeUpdateDto;
-import com.delivery.project.app.api.model.dto.endereco.cidadeDto.response.CidadeDto;
-import com.delivery.project.app.domain.model.Cidade;
+import com.delivery.project.app.api.model.mapper.CozinhaMapper;
 import com.delivery.project.app.domain.model.Cozinha;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-
-import java.util.List;
+import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@Mapper(componentModel = "spring")
-public interface CozinhaAssembler extends RepresentationModelAssembler<Cozinha, CozinhaDto> {
+@Component
+public class CozinhaAssembler implements RepresentationModelAssembler<Cozinha, CozinhaDto> {
+    
+    @Autowired
+    private CozinhaMapper cozinhaMapper;
+    
+    @Override
+    public CozinhaDto toModel(Cozinha entity) {
+        var cozinhaDto = cozinhaMapper.toModel(entity);
+        addLinks(cozinhaDto);
+        return cozinhaDto;
+    }
+
+    public Cozinha toEntity(CozinhaDto dto) {
+        return cozinhaMapper.toEntity(dto);
+    }
+
+    public void update(@MappingTarget Cozinha cozinha, CozinhaDto dto){
+        cozinhaMapper.update(cozinha, dto);
+    }
 
     @Override
-    CozinhaDto toModel(Cozinha cozinha);
-    Cozinha toEntity(CozinhaDto cozinhaDto);
-    List<CozinhaDto> toCollectionModel(List<Cozinha> cozinha);
-    @Mapping(target = "id", ignore = true)
-    void update(@MappingTarget Cozinha cozinha, CozinhaDto dto);
-
-    @AfterMapping
-    default void addLinks(@MappingTarget CozinhaDto cozinhaDto) {
+    public CollectionModel<CozinhaDto> toCollectionModel(Iterable<? extends Cozinha> entities) {
+        var collection =  RepresentationModelAssembler.super.toCollectionModel(entities);
+        collection.add(linkTo(methodOn(CozinhaController.class)
+                .findAll())
+                .withSelfRel());
+        return collection;
+    }
+    
+    private void addLinks(CozinhaDto cozinhaDto) {
         cozinhaDto
                 .add(linkTo(methodOn(CozinhaController.class)
                         .findById(cozinhaDto.getId()))
                         .withSelfRel());
     }
-
 }

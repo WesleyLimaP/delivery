@@ -7,10 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Formas de Pagamento", description = "Gerencia formas de pagamento")
 public interface FormaDePagamentoControllerDoc {
@@ -19,7 +18,7 @@ public interface FormaDePagamentoControllerDoc {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de formas de pagamento retornada com sucesso")
     })
-    ResponseEntity<List<FormaDePagamentoResponseDto>> findAll();
+    CollectionModel<FormaDePagamentoResponseDto> findAll();
 
     @Operation(summary = "Busca uma forma de pagamento por ID")
     @ApiResponses(value = {

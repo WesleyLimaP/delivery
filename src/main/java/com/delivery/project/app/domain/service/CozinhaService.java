@@ -7,6 +7,7 @@ import com.delivery.project.app.domain.exceptions.CozinhaNaoEncontradaException;
 import com.delivery.project.app.domain.repository.CozinhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public class CozinhaService {
 
 
     @Transactional(readOnly = true)
-    public List<CozinhaDto> findAll() {
+    public CollectionModel<CozinhaDto> findAll() {
        return assembler.toCollectionModel(repository.findAll());
     }
 

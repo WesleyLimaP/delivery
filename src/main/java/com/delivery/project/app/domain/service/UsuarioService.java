@@ -19,6 +19,7 @@ import com.delivery.project.app.domain.repository.RestauranteRepository;
 import com.delivery.project.app.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,7 +94,7 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public List<GrupoUsuarioResponseDto> findAllGrupos(Long usuarioId) {
+    public CollectionModel<GrupoUsuarioResponseDto> findAllGrupos(Long usuarioId) {
         Usuario usuario = getOrElseThrow(usuarioId);
         return grupoUsuarioAssembler.toCollectionModel(usuario.getGrupos());
     }
@@ -136,7 +137,7 @@ public class UsuarioService {
 
     }
     @Transactional(readOnly = true)
-    public List<RestauranteDto> findAllRestaurante( Long usuarioId) {
+    public CollectionModel<RestauranteDto> findAllRestaurante(Long usuarioId) {
         Usuario usuario = getOrElseThrow(usuarioId);
         return  restauranteAssembler.toCollectionModel(usuario.getRestaurantes().stream().toList());
 

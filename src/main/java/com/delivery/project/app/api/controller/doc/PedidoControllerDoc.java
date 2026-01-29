@@ -4,17 +4,14 @@ import com.delivery.project.app.api.model.dto.pedidoDto.request.PedidoRequestDto
 import com.delivery.project.app.api.model.dto.pedidoDto.response.PedidoDto;
 import com.delivery.project.app.api.model.dto.pedidoDto.response.PedidoMaxDto;
 import com.delivery.project.app.api.model.filter.PedidoFilter;
-import com.delivery.project.app.domain.model.Pedido;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Pedidos", description = "Gerencia pedidos")
 public interface PedidoControllerDoc {
@@ -23,7 +20,7 @@ public interface PedidoControllerDoc {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de pedidos retornada com sucesso")
     })
-    ResponseEntity<Page<List<PedidoDto>>> findAll(PedidoFilter filter, Pageable pageable);
+    PagedModel<PedidoDto> findAll(PedidoFilter filter, Pageable pageable);
 
     @Operation(summary = "Busca um pedido por ID")
     @ApiResponses(value = {

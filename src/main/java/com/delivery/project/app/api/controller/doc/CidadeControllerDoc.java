@@ -7,10 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Cidades", description = "Gerencia cidades")
 public interface
@@ -20,7 +19,7 @@ CidadeControllerDoc {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de cidades retornada com sucesso")
     })
-    ResponseEntity<List<CidadeDto>> findAll();
+    CollectionModel<CidadeDto> findAll();
 
     @Operation(summary = "Busca uma cidade por ID")
     @ApiResponses(value = {

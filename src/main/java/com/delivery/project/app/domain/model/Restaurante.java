@@ -36,7 +36,7 @@ public class Restaurante {
     @Embedded
     private Endereco endereco;
     @OneToMany(mappedBy = "restaurante")
-    private List<Produto> produtos = new ArrayList<>();
+    private List<Produto> produtos;
     @ManyToMany
     @JoinTable(
             name = "tb_usuario_restaurante",

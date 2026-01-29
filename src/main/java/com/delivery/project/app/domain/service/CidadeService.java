@@ -13,6 +13,7 @@ import com.delivery.project.app.domain.repository.EstadoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import com.delivery.project.app.domain.model.Cidade;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class CidadeService {
     private EstadoRepository estadorepository;
 
     @Transactional(readOnly = true)
-    public List<CidadeDto> findAll()
+    public CollectionModel<CidadeDto> findAll()
     {
         List<Cidade> cidade =  repository.findAll();
         return assembler.toCollectionModel(cidade);

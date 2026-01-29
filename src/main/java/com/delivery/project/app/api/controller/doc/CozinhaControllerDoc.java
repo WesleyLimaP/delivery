@@ -5,10 +5,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Cozinhas", description = "Gerencia cozinhas")
 public interface CozinhaControllerDoc {
@@ -17,7 +16,7 @@ public interface CozinhaControllerDoc {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de cozinhas retornada com sucesso")
     })
-    ResponseEntity<List<CozinhaDto>> findAll();
+    CollectionModel<CozinhaDto> findAll();
 
     @Operation(summary = "Busca uma cozinha por ID")
     @ApiResponses(value = {

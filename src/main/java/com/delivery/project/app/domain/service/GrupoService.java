@@ -15,6 +15,7 @@ import com.delivery.project.app.domain.repository.GrupoRepository;
 import com.delivery.project.app.domain.repository.PermissaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +36,8 @@ public class GrupoService {
         private PermissaoAssembler permissaoAssembler;
 
         @Transactional(readOnly = true)
-        public List<GrupoResponseDto> getAll() {
-            List<Grupo>  grupos = repository.findAll();
+        public CollectionModel<GrupoResponseDto> getAll() {
+            List<Grupo> grupos = repository.findAll();
             return assembler.toCollectionModel(grupos);
         }
 
@@ -75,17 +76,17 @@ public class GrupoService {
         }
 
         @Transactional(readOnly = true)
-    public List<PermissaoDto>findAllPermissoes(Long id) {
-            var grupo = getOrElseThrow(id);
-            return permissaoAssembler.toCollectionModel(grupo.getPermissoes());
+    public CollectionModel<PermissaoDto>findAllPermissoes(Long grupoid) {
+            var grupo = getOrElseThrow(grupoid);
+            return permissaoAssembler.toCollectionModel(grupo.getPermissoes(), grupoid);
     }
 
     @Transactional(readOnly = true)
-    public Object findByIdPermissoes(Long grupoId, Long permissaoId) {
+    public PermissaoDto findByIdPermissoes(Long grupoId, Long permissaoId) {
             Grupo grupo = getOrElseThrow(grupoId);
             Permissao permissao = getPermissaoOrElseThrow(permissaoId);
             verificarPermissao(grupo, permissao);
-        return permissaoAssembler.toModel(permissao);
+        return permissaoAssembler.toModel(permissao, grupoId);
     }
 
     private void verificarPermissao(Grupo grupo, Permissao permissao) {

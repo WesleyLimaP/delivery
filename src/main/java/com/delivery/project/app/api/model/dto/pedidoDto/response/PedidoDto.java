@@ -6,9 +6,11 @@ import com.delivery.project.app.domain.model.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDate;
 
+@Relation(collectionRelation = "pedidos")
 @Getter
 @Setter
 @AllArgsConstructor

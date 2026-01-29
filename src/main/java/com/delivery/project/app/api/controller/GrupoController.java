@@ -7,13 +7,12 @@ import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.GrupoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/grupos")
@@ -22,9 +21,8 @@ public class GrupoController implements GrupoControllerDoc {
         private GrupoService service;
 
         @GetMapping
-        public ResponseEntity<List<GrupoResponseDto>> getAll(){
-            List<GrupoResponseDto> grupos = service.getAll();
-            return ResponseEntity.ok(grupos);
+        public CollectionModel<GrupoResponseDto> getAll(){
+            return service.getAll();
         }
 
         @GetMapping(value = "/{id}")

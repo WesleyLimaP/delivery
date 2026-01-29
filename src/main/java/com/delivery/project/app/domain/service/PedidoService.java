@@ -13,11 +13,15 @@ import com.delivery.project.app.domain.repository.spec.PedidoSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class PedidoService  {
@@ -27,13 +31,15 @@ public class PedidoService  {
     private PedidoAssembler assembler;
     @Autowired
     private PedidoMaxAssembler maxAssembler;
+    @Autowired
+    private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
 
 
 
     @Transactional(readOnly = true)
-public Page<List<PedidoDto>> findAll(PedidoFilter filter, Pageable pageable) {
+public PagedModel<PedidoDto> findAll(PedidoFilter filter, Pageable pageable) {
         Page<Pedido> pedidoPage = repository.findAll(PedidoSpec.findByFiltros(filter), pageable);
-        return pedidoPage.map(x -> List.of(assembler.toModel(x)));
+        return pagedResourcesAssembler.toModel(pedidoPage, assembler);
 
     }
 

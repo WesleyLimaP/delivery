@@ -9,14 +9,13 @@ import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -25,11 +24,13 @@ import static org.springframework.http.ResponseEntity.status;
 public class PedidoController implements PedidoControllerDoc {
     @Autowired
     private PedidoService service;
+    @Autowired
+    private PagedResourcesAssembler<PedidoDto > pagedResourcesAssembler;
 
 
     @GetMapping
-    public ResponseEntity<Page<List<PedidoDto>>> findAll(PedidoFilter filter, Pageable pageable){
-        return ResponseEntity.ok().body(service.findAll( filter, pageable));
+    public PagedModel<PedidoDto> findAll(PedidoFilter filter, Pageable pageable){
+        return service.findAll( filter, pageable);
     }
 
     @GetMapping(value = "/{id}")

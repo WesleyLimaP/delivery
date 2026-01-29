@@ -12,6 +12,7 @@ import com.delivery.project.app.domain.model.Restaurante;
 import com.delivery.project.app.domain.repository.ProdutoRepository;
 import com.delivery.project.app.domain.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +39,7 @@ public class RestauranteProdutoService {
 
 
     @Transactional(readOnly = true)
-    public List<ProdutoResponseDto> findAllProdutoById(Long restId) {
+    public CollectionModel<ProdutoResponseDto> findAllProdutoById(Long restId) {
         Restaurante restaurante = getRestauranteOrElseThrow(restId);
         return assembler.toCollectionModel(restaurante.getProdutos());
     }
@@ -47,6 +48,7 @@ public class RestauranteProdutoService {
     public ProdutoResponseDto insertProduto(Long restId, ProdutoRequestDto produtoDto) {
        Restaurante restaurante = getRestauranteOrElseThrow(restId);
        Produto produto = assembler.toEntity(produtoDto);
+       produto.setRestaurante(restaurante);
         produto = produtoRepository.save(produto);
         restaurante.getProdutos().add(produto);
         return assembler.toModel(produto);

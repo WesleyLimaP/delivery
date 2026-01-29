@@ -6,12 +6,12 @@ import com.delivery.project.app.api.model.dto.produtoDto.response.ProdutoRespons
 import com.delivery.project.app.domain.service.RestauranteProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/restaurantes/{restId}/produtos")
@@ -20,13 +20,15 @@ public class RestauranteProdutoController implements RestauranteProdutoDoc {
     private RestauranteProdutoService service;
 
 
+
+
     @GetMapping(value = "/{prodId}")
     public ResponseEntity<ProdutoResponseDto> findProdutoById(@PathVariable Long restId, @PathVariable Long prodId){
         return ResponseEntity.ok().body(service.findProdutoById(restId, prodId));
     }
     @GetMapping()
-    public ResponseEntity<List<ProdutoResponseDto>> findAllProduto(@PathVariable Long restId){
-        return ResponseEntity.ok().body(service.findAllProdutoById(restId));
+    public CollectionModel<ProdutoResponseDto> findAllProduto(@PathVariable Long restId){
+        return service.findAllProdutoById(restId);
     }
     @PostMapping()
     public ResponseEntity<ProdutoResponseDto> insertProduto(@PathVariable Long restId, @Valid @RequestBody ProdutoRequestDto dto){

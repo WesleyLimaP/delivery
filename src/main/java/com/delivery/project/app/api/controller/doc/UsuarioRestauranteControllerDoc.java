@@ -1,14 +1,14 @@
 package com.delivery.project.app.api.controller.doc;
 
 
+import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Usuário Restaurantes", description = "Gerencia os restaurantes de um usuário")
 public interface UsuarioRestauranteControllerDoc {
@@ -18,7 +18,7 @@ public interface UsuarioRestauranteControllerDoc {
         @ApiResponse(responseCode = "200", description = "Lista de restaurantes retornada com sucesso"),
         @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
-    ResponseEntity<List<com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto>> findAllRestaurante(@PathVariable Long usuarioId);
+    CollectionModel<RestauranteDto> findAllRestaurante(@PathVariable Long usuarioId);
 
     @Operation(summary = "Associa um usuário a um restaurante")
     @ApiResponses(value = {

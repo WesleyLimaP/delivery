@@ -8,9 +8,9 @@ import com.delivery.project.app.api.model.dto.endereco.cidadeDto.response.Cidade
 import com.delivery.project.app.api.model.dto.endereco.cidadeDto.request.CidadeUpdateDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/cidades")
@@ -20,9 +20,9 @@ public class CidadeController implements CidadeControllerDoc {
 
 
     @GetMapping
-    public ResponseEntity<List<CidadeDto>> findAll(){
+    public CollectionModel<CidadeDto> findAll(){
         var response = service.findAll();
-        return ResponseEntity.ok().body(response);
+        return response;
     }
 
     @GetMapping(value = "/{id}")

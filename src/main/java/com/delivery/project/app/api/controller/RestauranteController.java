@@ -1,26 +1,22 @@
 package com.delivery.project.app.api.controller;
 
 import com.delivery.project.app.api.controller.doc.RestauranteControllerDoc;
-import com.delivery.project.app.api.model.dto.produtoDto.request.ProdutoRequestDto;
-import com.delivery.project.app.api.model.dto.produtoDto.response.ProdutoResponseDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteAbertoDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteInsertDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.request.RestauranteUpdateDto;
 import com.delivery.project.app.api.util.LocationBulder;
-import com.delivery.project.app.domain.service.RestauranteProdutoService;
 import com.delivery.project.app.domain.service.RestauranteService;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDtoSingleSearch;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.springframework.http.ResponseEntity.status;
@@ -32,7 +28,7 @@ public class RestauranteController implements RestauranteControllerDoc {
     private RestauranteService service;
 
     @GetMapping
-    public ResponseEntity<List<RestauranteDto>> findAll(){
+    public ResponseEntity<CollectionModel<RestauranteDto>> findAll(){
         return ResponseEntity
                 .ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))

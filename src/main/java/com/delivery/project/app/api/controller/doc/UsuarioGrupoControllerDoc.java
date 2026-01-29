@@ -8,10 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Usuário Grupos", description = "Gerencia os grupos de um usuário")
 public interface UsuarioGrupoControllerDoc {
@@ -21,7 +20,7 @@ public interface UsuarioGrupoControllerDoc {
         @ApiResponse(responseCode = "200", description = "Lista de grupos retornada com sucesso"),
         @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
-    ResponseEntity<List<com.delivery.project.app.api.model.dto.usuarioDto.response.GrupoUsuarioResponseDto>> findAllGrupos(@PathVariable Long usuarioId);
+    CollectionModel<GrupoUsuarioResponseDto> findAllGrupos(@PathVariable Long usuarioId);
 
     @Operation(summary = "Associa um usuário a um grupo")
     @ApiResponses(value = {

@@ -7,12 +7,12 @@ import com.delivery.project.app.api.util.LocationBulder;
 import com.delivery.project.app.domain.service.FormaDePagamentoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController()
 @RequestMapping("/formas-de-pagamento")
@@ -21,8 +21,8 @@ public class FormaDePagamentoController implements FormaDePagamentoControllerDoc
     private FormaDePagamentoService service;
 
     @GetMapping
-    public ResponseEntity<List<FormaDePagamentoResponseDto>> findAll(){
-        return ResponseEntity.ok(service.getAll());
+    public CollectionModel<FormaDePagamentoResponseDto> findAll(){
+        return service.getAll();
     }
     @GetMapping(value = "/{id}")
     public ResponseEntity<FormaDePagamentoResponseDto> findById(@PathVariable Long id){

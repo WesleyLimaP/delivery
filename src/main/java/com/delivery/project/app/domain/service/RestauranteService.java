@@ -17,6 +17,7 @@ import com.delivery.project.app.domain.repository.FormaDePagamentoRepository;
 import com.delivery.project.app.domain.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ public class RestauranteService {
 
 
     @Transactional(readOnly = true)
-    public List<RestauranteDto> findAll() {
+    public CollectionModel<RestauranteDto> findAll() {
         return restauranteAssembler.toCollectionModel(restauranteRepository.getAll());
     }
 

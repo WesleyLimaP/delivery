@@ -9,11 +9,10 @@ import com.delivery.project.app.domain.exceptions.FormaDePagamentoEncontradaExce
 import com.delivery.project.app.domain.repository.FormaDePagamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
 
 @Service
 public class FormaDePagamentoService {
@@ -25,7 +24,7 @@ public class FormaDePagamentoService {
     private FormaDePagamentoAssembler assembler;
 
     @Transactional(readOnly = true)
-    public List<FormaDePagamentoResponseDto> getAll() {
+    public CollectionModel<FormaDePagamentoResponseDto> getAll() {
         var formasDePagamento = repository.findAll();
         return assembler.toCollectionModel(formasDePagamento);
     }

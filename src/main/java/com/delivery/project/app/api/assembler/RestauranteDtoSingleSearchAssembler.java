@@ -3,10 +3,13 @@ package com.delivery.project.app.api.assembler;
 import com.delivery.project.app.api.controller.*;
 import com.delivery.project.app.api.model.dto.formaDePagamentoDto.response.FormaDePagamentoResponseDto;
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDtoSingleSearch;
+import com.delivery.project.app.api.model.mapper.RestauranteDtoSingleSearchMapper;
+import com.delivery.project.app.api.model.mapper.RestauranteMapper;
 import com.delivery.project.app.domain.model.Restaurante;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -14,11 +17,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilderDslKt.withRel;
 
 @Mapper(componentModel = "spring")
-public  interface RestauranteDtoSingleSearchAssembler extends RepresentationModelAssembler<Restaurante, RestauranteDtoSingleSearch> {
+public  class RestauranteDtoSingleSearchAssembler implements RepresentationModelAssembler<Restaurante, RestauranteDtoSingleSearch> {
+
+    @Autowired
+    private RestauranteDtoSingleSearchMapper restauranteMapper;
+
     @Override
-    RestauranteDtoSingleSearch toModel(Restaurante restaurante);
-    @AfterMapping
-    default void addLinks(@MappingTarget RestauranteDtoSingleSearch restauranteDtoSingleSearch){
+    public RestauranteDtoSingleSearch toModel(Restaurante restaurante){
+        var restauranteDtoSingleSearch = restauranteMapper.toModel(restaurante);
+        addLinks(restauranteDtoSingleSearch);
+        return restauranteDtoSingleSearch;
+    };
+
+    private void addLinks(@MappingTarget RestauranteDtoSingleSearch restauranteDtoSingleSearch){
         restauranteDtoSingleSearch.add(linkTo(methodOn(RestauranteController.class)
                 .findById(restauranteDtoSingleSearch.getId()))
                 .withSelfRel());

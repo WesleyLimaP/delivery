@@ -7,12 +7,12 @@ import com.delivery.project.app.domain.service.EstadoService;
 import com.delivery.project.app.api.model.dto.endereco.estadoDto.EstadoDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -24,8 +24,8 @@ public class EstadoController implements EstadoControllerDoc {
 
 
     @GetMapping
-    public ResponseEntity<List<EstadoDto>> findAll(){
-        return ResponseEntity.ok().body(service.findAll());
+    public CollectionModel<EstadoDto> findAll(){
+        return service.findAll();
     }
 
     @GetMapping(value = "/{id}")

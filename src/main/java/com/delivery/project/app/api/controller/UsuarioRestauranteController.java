@@ -4,10 +4,9 @@ import com.delivery.project.app.api.controller.doc.UsuarioRestauranteControllerD
 import com.delivery.project.app.api.model.dto.restauranteDto.response.RestauranteDto;
 import com.delivery.project.app.domain.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/usuarios/{usuarioId}/restaurantes")
@@ -20,8 +19,8 @@ public class UsuarioRestauranteController implements UsuarioRestauranteControlle
         return ResponseEntity.ok().body(service.findRestauranteByid(usuarioId, restauranteId));
     }
     @GetMapping()
-    public ResponseEntity<List<RestauranteDto>> findAllRestaurante(@PathVariable Long usuarioId){
-        return ResponseEntity.ok().body(service.findAllRestaurante(usuarioId));
+    public CollectionModel<RestauranteDto> findAllRestaurante(@PathVariable Long usuarioId){
+        return service.findAllRestaurante(usuarioId);
     }
 
 

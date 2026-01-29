@@ -7,9 +7,9 @@ import com.delivery.project.app.api.model.dto.endereco.estadoDto.EstadoDto;
 import com.delivery.project.app.domain.exceptions.EntidadeEmUsoException;
 import com.delivery.project.app.domain.exceptions.EstadoNaoEncontradoException;
 import com.delivery.project.app.domain.repository.EstadoRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +25,7 @@ public class EstadoService {
     private EstadoAssembler assembler;
 
     @Transactional(readOnly = true)
-    public List<EstadoDto> findAll()
+    public CollectionModel<EstadoDto> findAll()
     {
         List<Estado> estados =  repository.findAll();
         return assembler.toCollectionModel(estados);

@@ -1,10 +1,9 @@
 package com.delivery.project.app.domain.service;
 
-import com.delivery.project.app.api.assembler.FotoProdutoAssembler;
 import com.delivery.project.app.api.model.dto.filesDto.ImageDto;
 import com.delivery.project.app.api.model.dto.fotoProduto.FotoProdutoDto;
+import com.delivery.project.app.api.model.mapper.FotoProdutoMapper;
 import com.delivery.project.app.domain.repository.ProdutoRepository;
-import com.delivery.project.app.domain.service.util.mapper.fotoProduto.FotoProdutoMapper;
 import com.delivery.project.app.domain.exceptions.FotoNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class FotoProdutoService {
     @Autowired
     private FotoStorageService storageService;
     @Autowired
-    private FotoProdutoAssembler assembler;
+    private FotoProdutoMapper assembler;
 
     @Transactional
     public FotoProdutoDto insert(Long restauranteId, Long produtoId, ImageDto imageDto){

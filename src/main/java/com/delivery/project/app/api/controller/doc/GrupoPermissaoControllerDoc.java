@@ -5,10 +5,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Grupo Permissões", description = "Gerencia as permissões de um grupo")
 public interface GrupoPermissaoControllerDoc {
@@ -18,7 +17,7 @@ public interface GrupoPermissaoControllerDoc {
         @ApiResponse(responseCode = "200", description = "Lista de permissões retornada com sucesso"),
         @ApiResponse(responseCode = "404", description = "Grupo não encontrado")
     })
-    ResponseEntity<List<PermissaoDto>> findAllPermissoes(@PathVariable Long grupoId);
+    CollectionModel<PermissaoDto> findAllPermissoes(@PathVariable Long grupoId);
 
     @Operation(summary = "Associa uma permissão a um grupo")
     @ApiResponses(value = {

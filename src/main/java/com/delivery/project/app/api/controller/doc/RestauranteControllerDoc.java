@@ -9,10 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Restaurantes", description = "Gerencia restaurantes e seus produtos")
 public interface RestauranteControllerDoc {
@@ -22,7 +21,7 @@ public interface RestauranteControllerDoc {
         @ApiResponse(responseCode = "200", description = "Lista de restaurantes retornada com sucesso")
     })
     @GetMapping
-    ResponseEntity<List<RestauranteDto>> findAll();
+    ResponseEntity<CollectionModel<RestauranteDto>> findAll();
 
     @Operation(summary = "Busca um restaurante por ID")
     @ApiResponses(value = {
